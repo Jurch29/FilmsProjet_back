@@ -33,4 +33,4 @@ out/
 
 ### ProjetFilms ###
 src/main/resources/application.properties
-bin
+bin/
