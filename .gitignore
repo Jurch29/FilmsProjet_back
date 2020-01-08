@@ -30,3 +30,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### ProjetFilms ###
+/src/main/resources/application.properties
