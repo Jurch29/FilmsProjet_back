@@ -32,4 +32,5 @@ out/
 .vscode/
 
 ### ProjetFilms ###
-/src/main/resources/application.properties
+src/main/resources/application.properties
+bin
