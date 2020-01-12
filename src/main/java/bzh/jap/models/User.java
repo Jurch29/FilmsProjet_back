@@ -48,7 +48,7 @@ public class User {
 	private String userPassword;
 	
 	@Basic
-	@Column(name = "user_lastconnection")
+	@Column(name = "user_last_connection")
 	private Timestamp userLastConnection;
 	
 	@Column(name = "user_is_deleted", nullable = false, columnDefinition = "TINYINT", length = 1)
