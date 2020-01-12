@@ -10,9 +10,9 @@ import bzh.jap.models.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-	Optional<User> findByUsername(String username);
+	Optional<User> findByUserLogin(String user_login);
 
-	Boolean existsByUsername(String username);
+	Boolean existsByUserLogin(String user_login);
 
-	Boolean existsByEmail(String email);
+	Boolean existsByUserEmail(String user_email);
 }

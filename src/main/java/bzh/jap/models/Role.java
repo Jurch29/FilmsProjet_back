@@ -3,37 +3,37 @@ package bzh.jap.models;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "Role")
 public class Role {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Integer role_id;
 
 	@Enumerated(EnumType.STRING)
-	@Column(length = 20)
-	private ERole name;
+	@Column(name = "role_title", length = 255)
+	private ERole roleTitle;
 
 	public Role() {
 
 	}
 
 	public Role(ERole name) {
-		this.name = name;
+		this.roleTitle = name;
 	}
 
 	public Integer getId() {
-		return id;
+		return role_id;
 	}
 
 	public void setId(Integer id) {
-		this.id = id;
+		this.role_id = id;
 	}
 
 	public ERole getName() {
-		return name;
+		return roleTitle;
 	}
 
 	public void setName(ERole name) {
-		this.name = name;
+		this.roleTitle = name;
 	}
 }
