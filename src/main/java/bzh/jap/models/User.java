@@ -1,7 +1,9 @@
 package bzh.jap.models;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -59,6 +61,9 @@ public class User {
 				joinColumns = @JoinColumn(name = "user_id"), 
 				inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
+	
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private UserActivation userActivation;
 
 	public User() {
 	}
@@ -142,4 +147,13 @@ public class User {
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
+
+	public UserActivation getUserActivation() {
+		return userActivation;
+	}
+
+	public void setUserActivation(UserActivation userActivation) {
+		this.userActivation = userActivation;
+	}
+	
 }
