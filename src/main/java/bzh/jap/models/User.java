@@ -11,6 +11,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(	name = "User", 
 		uniqueConstraints = { 
@@ -21,7 +23,7 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id", nullable = false)
-	private int userId;
+	private long userId;
 	
 	@NotBlank
 	@Size(max = 255)
@@ -63,6 +65,7 @@ public class User {
 	private Set<Role> roles = new HashSet<>();
 	
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+	@JsonBackReference
     private UserActivation userActivation;
 
 	public User() {
@@ -76,11 +79,11 @@ public class User {
 		this.userPassword = password;
 	}
 
-	public int getUserId() {
+	public long getUserId() {
 		return userId;
 	}
 
-	public void setUserId(int userId) {
+	public void setUserId(long userId) {
 		this.userId = userId;
 	}
 

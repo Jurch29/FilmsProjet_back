@@ -1,5 +1,6 @@
 package bzh.jap.controllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,10 +28,6 @@ public class TestController {
 	
 	@GetMapping("/all")
 	public String allAccess() {
-		Optional<User> user = userRepository.findByUserLogin("user");
-		user.get().setRoles(null);
-		userRepository.save(user.get());
-		userRepository.delete(user.get());
 		return "Public Content.";
 	}
 	
@@ -51,5 +49,19 @@ public class TestController {
 		return "Admin Board.";
 	}
 	
+	@DeleteMapping("/users/{id}")
+	public String deleteStudent(@PathVariable long id) {
+		userRepository.deleteById(id);
+		return "user "+id+"have been deleted";
+	}
 	
+	@GetMapping("/users")
+	public List<User> retrieveAllUsers() {
+		return userRepository.findAll();
+	}
+	
+	@GetMapping("/users/{id}")
+	public Optional<User> retrieveUser(@PathVariable long id) {
+		return userRepository.findById(id);
+	}
 }

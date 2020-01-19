@@ -12,13 +12,15 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "UserActivation")
 public class UserActivation {
 
 	@Id
 	@Column(name = "user_id", nullable = false)
-	private int userId;
+	private long userId;
 	
 	@NotBlank
 	@Size(max = 25)
@@ -28,6 +30,7 @@ public class UserActivation {
 	@OneToOne
     @JoinColumn(name="user_id")
     @MapsId
+    @JsonManagedReference
     private User user;
 	
 	public UserActivation() {
@@ -37,11 +40,11 @@ public class UserActivation {
 		this.setUserActivationCode(codeActivation);
 	}
 	
-	public int getId() {
+	public long getId() {
 		return userId;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.userId = id;
 	}
 
