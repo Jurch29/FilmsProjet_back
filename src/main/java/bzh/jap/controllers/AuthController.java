@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.apache.el.stream.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -16,10 +17,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import bzh.jap.models.ERole;
 import bzh.jap.models.Role;
@@ -29,6 +35,7 @@ import bzh.jap.payload.JwtResponse;
 import bzh.jap.payload.LoginRequest;
 import bzh.jap.payload.MessageResponse;
 import bzh.jap.payload.SignupRequest;
+import bzh.jap.payload.UserActivationResponse;
 import bzh.jap.repository.RoleRepository;
 import bzh.jap.repository.UserActivationRepository;
 import bzh.jap.repository.UserRepository;
@@ -62,6 +69,9 @@ public class AuthController {
 
 	@Autowired
 	JwtUtils jwtUtils;
+	
+	@Autowired
+	ObjectMapper mapper;
 
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -76,12 +86,35 @@ public class AuthController {
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
-
-		return ResponseEntity.ok(new JwtResponse(jwt, 
-												 userDetails.getId(), 
-												 userDetails.getUsername(), 
-												 userDetails.getEmail(), 
-												 roles));
+		
+		java.util.Optional<UserActivation> userActivation = userActivationRepository.findById(userDetails.getId());
+		
+		//code d'activation present pour ce user on envoie une réponse UserActivationResponse
+		if (!userActivation.isEmpty()) {
+			return ResponseEntity.ok(new UserActivationResponse(userDetails.getId(), true));
+		}
+		
+		//Pas de code d'activation : pas la premiere connexion on renvoie une réponse jwtresponse
+		return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getId(),userDetails.getUsername(),userDetails.getEmail(),roles));
+	}
+	
+	//ObjectNode nous permet de renvoyer un objet json customisé
+	@GetMapping("/activation")
+	public ObjectNode activateUser(@RequestParam("user_id") String id, @RequestParam("activation_code") String code) {
+		
+		Boolean result = false;
+		java.util.Optional<UserActivation> userActivation = userActivationRepository.findById(Long.parseLong(id));
+		//Le code est bon on supprime la ligne useractivation qui correspond à ce user + renvoie true
+		if (userActivation.get().getUserActivationCode().equals(code)) {
+			userActivationRepository.delete(userActivation.get());
+			result = true;
+		}
+		
+		System.out.println(userActivation.get().getUserActivationCode()+" / "+code);
+		
+		ObjectNode objectNode = mapper.createObjectNode();
+	    objectNode.put("isActivated", result);
+	    return objectNode;
 	}
 
 	@PostMapping("/signup")

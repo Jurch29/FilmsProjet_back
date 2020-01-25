@@ -27,7 +27,7 @@ public class UserActivation {
 	@Column(name = "user_activation_code")
 	private String userActivationCode;
 	
-	@OneToOne
+	@OneToOne(orphanRemoval=true)
     @JoinColumn(name="user_id")
     @MapsId
     @JsonManagedReference
