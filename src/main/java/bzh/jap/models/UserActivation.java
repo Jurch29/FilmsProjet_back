@@ -2,8 +2,7 @@ package bzh.jap.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
@@ -27,7 +26,7 @@ public class UserActivation {
 	@Column(name = "user_activation_code")
 	private String userActivationCode;
 	
-	@OneToOne(orphanRemoval=true)
+	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     @MapsId
     @JsonManagedReference

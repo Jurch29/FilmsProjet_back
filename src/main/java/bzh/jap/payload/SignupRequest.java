@@ -75,4 +75,10 @@ public class SignupRequest {
     public void setRole(Set<String> role) {
       this.role = role;
     }
+    
+    @Override
+    public String toString() {
+    	// TODO Auto-generated method stub
+    	return "lastname : "+this.lastname+" firstname: "+this.firstname+" username: "+this.username+" email: "+this.email+" role: "+this.role;
+    }
 }

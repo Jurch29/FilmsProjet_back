@@ -110,8 +110,6 @@ public class AuthController {
 			result = true;
 		}
 		
-		System.out.println(userActivation.get().getUserActivationCode()+" / "+code);
-		
 		ObjectNode objectNode = mapper.createObjectNode();
 	    objectNode.put("isActivated", result);
 	    return objectNode;
@@ -119,6 +117,9 @@ public class AuthController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+		
+		System.out.println(signUpRequest.toString());
+		
 		if (userRepository.existsByUserLogin(signUpRequest.getUsername())) {
 			return ResponseEntity
 					.badRequest()
@@ -176,8 +177,8 @@ public class AuthController {
 		userRepository.save(user);
 		
 		Email mail = new Email();
-		mail.sendEmail(javaMailSender, "Bienvenue "+user.getUserLogin()+" sur Ez-Movies ! veuillez vous connecter et taper le code suivant : "
-				+ ua.getUserActivationCode()+" afin d'activer votre compte.", "Code d'activation Ez-Movies", user.getUserEmail());
+		//mail.sendEmail(javaMailSender, "Bienvenue "+user.getUserLogin()+" sur Ez-Movies ! veuillez vous connecter et taper le code suivant : "
+		//		+ ua.getUserActivationCode()+" afin d'activer votre compte.", "Code d'activation Ez-Movies", user.getUserEmail());
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
