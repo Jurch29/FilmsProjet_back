@@ -64,4 +64,10 @@ public class TestController {
 	public Optional<User> retrieveUser(@PathVariable long id) {
 		return userRepository.findById(id);
 	}
+	
+	@GetMapping("/mytest")
+	public void myTest() {
+		System.out.println("OK");
+	}
+	
 }

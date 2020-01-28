@@ -1,9 +1,9 @@
 package bzh.jap.models;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -67,6 +67,10 @@ public class User {
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonBackReference
     private UserActivation userActivation;
+	
+//	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+//	@JsonBackReference
+//	private List<MovieUserMark> movieUserMark = new ArrayList<MovieUserMark>();
 
 	public User() {
 	}
@@ -158,5 +162,12 @@ public class User {
 	public void setUserActivation(UserActivation userActivation) {
 		this.userActivation = userActivation;
 	}
-	
+
+//	public List<MovieUserMark> getMovieUserMark() {
+//		return movieUserMark;
+//	}
+//
+//	public void setMovieUserMark(List<MovieUserMark> movieUserMark) {
+//		this.movieUserMark = movieUserMark;
+//	}
 }
