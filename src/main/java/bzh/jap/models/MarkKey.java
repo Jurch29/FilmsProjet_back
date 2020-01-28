@@ -17,6 +17,16 @@ public class MarkKey implements Serializable {
 
     @Column(name = "user_id", nullable = false)
     private long userId;
+    
+	public MarkKey() {
+		// TODO Auto-generated constructor stub
+	}
+    
+    public MarkKey(long movieId, long userId) {
+		// TODO Auto-generated constructor stub
+    	this.movieId = movieId;
+    	this.userId = userId;
+	}
 
 	public long getMovieId() {
 		return movieId;

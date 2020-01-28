@@ -13,7 +13,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import bzh.jap.models.MarkKey;
+import bzh.jap.models.Movie;
+import bzh.jap.models.MovieUserMark;
 import bzh.jap.models.User;
+import bzh.jap.repository.MovieRepository;
+import bzh.jap.repository.MovieUserMarkRepository;
 import bzh.jap.repository.UserRepository;
 import bzh.jap.util.Email;
 import bzh.jap.util.GeneralService;
@@ -25,6 +30,12 @@ public class TestController {
 	
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	MovieUserMarkRepository movieUserMarkRepository;
+	
+	@Autowired
+	MovieRepository movieRepository;
 	
 	@GetMapping("/all")
 	public String allAccess() {
@@ -65,9 +76,16 @@ public class TestController {
 		return userRepository.findById(id);
 	}
 	
-	@GetMapping("/mytest")
-	public void myTest() {
-		System.out.println("OK");
+	@GetMapping("/usermark")
+	public String myTest() {
+		Optional<Movie> mv = movieRepository.findById((long) 1);
+		Optional<User> u = userRepository.findById((long) 1);
+		
+		MovieUserMark m = new MovieUserMark(new MarkKey(13, 5), 4.2);
+		m.setMovie(mv.get());
+		m.setUser(u.get());
+		
+		movieUserMarkRepository.save(m);
+		return "OK";
 	}
-	
 }

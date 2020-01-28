@@ -28,6 +28,16 @@ public class MovieUserMark {
     @JoinColumn(name="movie_id")
 	@MapsId("movie_id")
     private Movie movie;
+	
+	public MovieUserMark() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	public MovieUserMark(MarkKey mk, double note) {
+		// TODO Auto-generated constructor stub
+		this.markKey = mk;
+		this.movieUserMarkMark = note;
+	}
 
 	public MarkKey getMarkKey() {
 		return markKey;
