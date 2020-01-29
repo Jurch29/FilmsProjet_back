@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,15 +12,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import bzh.jap.models.MarkKey;
+import bzh.jap.models.MovieUserKey;
 import bzh.jap.models.Movie;
+import bzh.jap.models.MovieUserCart;
 import bzh.jap.models.MovieUserMark;
 import bzh.jap.models.User;
 import bzh.jap.repository.MovieRepository;
+import bzh.jap.repository.MovieUserCartRepository;
 import bzh.jap.repository.MovieUserMarkRepository;
 import bzh.jap.repository.UserRepository;
-import bzh.jap.util.Email;
-import bzh.jap.util.GeneralService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -33,6 +32,9 @@ public class TestController {
 	
 	@Autowired
 	MovieUserMarkRepository movieUserMarkRepository;
+	
+	@Autowired
+	MovieUserCartRepository movieUserCartRepository;
 	
 	@Autowired
 	MovieRepository movieRepository;
@@ -77,15 +79,28 @@ public class TestController {
 	}
 	
 	@GetMapping("/usermark")
-	public String myTest() {
+	public String markTest() {
 		Optional<Movie> mv = movieRepository.findById((long) 1);
 		Optional<User> u = userRepository.findById((long) 1);
 		
-		MovieUserMark m = new MovieUserMark(new MarkKey(13, 5), 4.2);
+		MovieUserMark m = new MovieUserMark(new MovieUserKey(13, 5), 4.2);
 		m.setMovie(mv.get());
 		m.setUser(u.get());
 		
 		movieUserMarkRepository.save(m);
+		return "OK";
+	}
+	
+	@GetMapping("/usercart")
+	public String cartTest() {
+		Optional<Movie> mv = movieRepository.findById((long) 1);
+		Optional<User> u = userRepository.findById((long) 1);
+		
+		MovieUserCart m = new MovieUserCart(new MovieUserKey(13, 5), 3);
+		m.setMovie(mv.get());
+		m.setUser(u.get());
+		
+		movieUserCartRepository.save(m);
 		return "OK";
 	}
 }

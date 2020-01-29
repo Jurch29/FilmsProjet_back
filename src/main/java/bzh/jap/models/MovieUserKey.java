@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Embeddable
-public class MarkKey implements Serializable {
+public class MovieUserKey implements Serializable {
 	
 	/**
 	 * 
@@ -18,11 +18,11 @@ public class MarkKey implements Serializable {
     @Column(name = "user_id", nullable = false)
     private long userId;
     
-	public MarkKey() {
+	public MovieUserKey() {
 		// TODO Auto-generated constructor stub
 	}
     
-    public MarkKey(long movieId, long userId) {
+    public MovieUserKey(long movieId, long userId) {
 		// TODO Auto-generated constructor stub
     	this.movieId = movieId;
     	this.userId = userId;
@@ -44,23 +44,15 @@ public class MarkKey implements Serializable {
 		this.userId = userId;
 	}
 	
-	/*
 	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        EmployeeIdentity that = (EmployeeIdentity) o;
+        MovieUserKey that = (MovieUserKey) o;
 
-        if (!employeeId.equals(that.employeeId)) return false;
-        return companyId.equals(that.companyId);
+        if (!(this.movieId==that.movieId)) return false;
+        return this.userId==that.userId;
     }
 
-    @Override
-    public int hashCode() {
-        int result = employeeId.hashCode();
-        result = 31 * result + companyId.hashCode();
-        return result;
-    }
-    */
 }

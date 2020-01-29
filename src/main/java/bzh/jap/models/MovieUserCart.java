@@ -10,14 +10,14 @@ import javax.persistence.MapsId;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "MovieUserMark")
-public class MovieUserMark {
-
+@Table(name = "MovieUserCart")
+public class MovieUserCart {
+	
 	@EmbeddedId
 	private MovieUserKey embeddedKey;
 	
-	@Column(name = "movie_user_mark_mark")
-    private double movieUserMarkMark;
+	@Column(name = "movie_user_cart_count")
+    private int movieUserCartCount;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
@@ -29,14 +29,14 @@ public class MovieUserMark {
 	@MapsId("movie_id")
     private Movie movie;
 	
-	public MovieUserMark() {
+	public MovieUserCart() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public MovieUserMark(MovieUserKey muk, double note) {
+	public MovieUserCart(MovieUserKey muk, int quantity) {
 		// TODO Auto-generated constructor stub
 		this.embeddedKey = muk;
-		this.movieUserMarkMark = note;
+		this.movieUserCartCount = quantity;
 	}
 	
 	public MovieUserKey getEmbeddedKey() {
@@ -46,13 +46,13 @@ public class MovieUserMark {
 	public void setEmbeddedKey(MovieUserKey embeddedKey) {
 		this.embeddedKey = embeddedKey;
 	}
-
-	public double getMovieUserMarkMark() {
-		return movieUserMarkMark;
+	
+	public int getMovieUserCartCount() {
+		return movieUserCartCount;
 	}
 
-	public void setMovieUserMarkMark(double movieUserMarkMark) {
-		this.movieUserMarkMark = movieUserMarkMark;
+	public void setMovieUserCartCount(int movieUserCartCount) {
+		this.movieUserCartCount = movieUserCartCount;
 	}
 
 	public User getUser() {
@@ -70,5 +70,5 @@ public class MovieUserMark {
 	public void setMovie(Movie movie) {
 		this.movie = movie;
 	}
-	
+
 }
