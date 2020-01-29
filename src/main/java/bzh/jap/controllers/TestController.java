@@ -1,5 +1,6 @@
 package bzh.jap.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,10 +17,12 @@ import bzh.jap.models.MovieUserKey;
 import bzh.jap.models.Movie;
 import bzh.jap.models.MovieUserCart;
 import bzh.jap.models.MovieUserMark;
+import bzh.jap.models.Trailer;
 import bzh.jap.models.User;
 import bzh.jap.repository.MovieRepository;
 import bzh.jap.repository.MovieUserCartRepository;
 import bzh.jap.repository.MovieUserMarkRepository;
+import bzh.jap.repository.TrailerRepository;
 import bzh.jap.repository.UserRepository;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -38,6 +41,9 @@ public class TestController {
 	
 	@Autowired
 	MovieRepository movieRepository;
+	
+	@Autowired
+	TrailerRepository trailerRepository;
 	
 	@GetMapping("/all")
 	public String allAccess() {
@@ -101,6 +107,25 @@ public class TestController {
 		m.setUser(u.get());
 		
 		movieUserCartRepository.save(m);
+		return "OK";
+	}
+	
+	@GetMapping("/trailer")
+	public String trailerTest() {
+		Optional<Movie> mv = movieRepository.findById((long) 23);
+		
+		ArrayList<Trailer> t = new ArrayList<Trailer>();
+		Optional<Trailer> t1 = trailerRepository.findById((long) 40);
+		Optional<Trailer> t2 = trailerRepository.findById((long) 41);
+		Optional<Trailer> t3 = trailerRepository.findById((long) 42);
+		t.add(t1.get());
+		t.add(t2.get());
+		t.add(t3.get());
+		
+		mv.get().setTrailers(t);
+		
+		movieRepository.save(mv.get());
+		
 		return "OK";
 	}
 }

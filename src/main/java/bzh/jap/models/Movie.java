@@ -1,12 +1,17 @@
 package bzh.jap.models;
 
 import java.sql.Timestamp;
+import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -48,6 +53,12 @@ public class Movie {
 	
 	@Column(name = "movie_is_deleted", nullable = false, columnDefinition = "TINYINT", length = 1)
 	private boolean userIsDeleted;
+	
+	@OneToMany
+	@JoinTable(	name = "MovieTrailer", 
+		joinColumns = @JoinColumn(name = "movie_id"), 
+		inverseJoinColumns = @JoinColumn(name = "trailer_id"))
+	private List<Trailer> trailers;
 	
 //	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 //	@JsonBackReference
@@ -125,6 +136,14 @@ public class Movie {
 		this.userIsDeleted = userIsDeleted;
 	}
 
+	public List<Trailer> getTrailers() {
+		return trailers;
+	}
+
+	public void setTrailers(List<Trailer> trailers) {
+		this.trailers = trailers;
+	}
+	
 //	public List<MovieUserMark> getMovieUserMark() {
 //		return movieUserMark;
 //	}
