@@ -1,11 +1,14 @@
 package bzh.jap.models;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,6 +19,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(	name = "Movie" )
@@ -61,6 +66,12 @@ public class Movie {
 		inverseJoinColumns = @JoinColumn(name = "trailer_id"))
 	private List<Trailer> trailers;
 	
+	@OneToMany
+	@JoinTable(	name = "MovieImage", 
+		joinColumns = @JoinColumn(name = "movie_id"), 
+		inverseJoinColumns = @JoinColumn(name = "image_id"))
+	private List<Image> images;
+	
 	@ManyToMany
 	@JoinTable(	name = "MovieAuthor", 
 		joinColumns = @JoinColumn(name = "movie_id"), 
@@ -75,9 +86,17 @@ public class Movie {
 	
 	@ManyToMany
 	@JoinTable(	name = "MovieCategory", 
-		joinColumns = @JoinColumn(name = "movie_id"), 
+		joinColumns = @JoinColumn(name = "movie_id"),
 		inverseJoinColumns = @JoinColumn(name = "category_id"))
 	private List<Category> categories;
+	
+	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@JsonBackReference
+    private List<MovieUserComment> movieUserComments = new ArrayList<MovieUserComment>();
+	
+	public Movie() {
+		// TODO Auto-generated constructor stub
+	}
 
 	public long getMovieId() {
 		return movieId;
@@ -182,4 +201,21 @@ public class Movie {
 	public void setCategories(List<Category> categories) {
 		this.categories = categories;
 	}
+
+	public List<Image> getImages() {
+		return images;
+	}
+
+	public void setImages(List<Image> images) {
+		this.images = images;
+	}
+
+	public List<MovieUserComment> getMovieUserComments() {
+		return movieUserComments;
+	}
+
+	public void setMovieUserComments(List<MovieUserComment> movieUserComments) {
+		this.movieUserComments = movieUserComments;
+	}
+	
 }

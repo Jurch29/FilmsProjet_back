@@ -15,14 +15,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import bzh.jap.models.MovieUserKey;
 import bzh.jap.models.Actor;
+import bzh.jap.models.Image;
 import bzh.jap.models.Movie;
 import bzh.jap.models.MovieUserCart;
+import bzh.jap.models.MovieUserComment;
 import bzh.jap.models.MovieUserMark;
 import bzh.jap.models.Trailer;
 import bzh.jap.models.User;
 import bzh.jap.repository.ActorRepository;
+import bzh.jap.repository.ImageRepository;
 import bzh.jap.repository.MovieRepository;
 import bzh.jap.repository.MovieUserCartRepository;
+import bzh.jap.repository.MovieUserCommentRepository;
 import bzh.jap.repository.MovieUserMarkRepository;
 import bzh.jap.repository.TrailerRepository;
 import bzh.jap.repository.UserRepository;
@@ -49,6 +53,12 @@ public class TestController {
 	
 	@Autowired
 	ActorRepository actorRepository;
+	
+	@Autowired
+	ImageRepository imageRepository;
+	
+	@Autowired
+	MovieUserCommentRepository movieUserCommentRepository;
 	
 	@GetMapping("/all")
 	public String allAccess() {
@@ -138,6 +148,28 @@ public class TestController {
 	public String actorTest() {
 		Actor actor = new Actor("fiou","chakal");
 		actorRepository.save(actor);
+		return "OK";
+	}
+	
+	@GetMapping("/image")
+	public String imageTest() {
+		Image i = new Image("foudsllkdsjf");
+		imageRepository.save(i);
+		return "OK";
+	}
+	
+	@GetMapping("/movieComment")
+	public String movieCommentTest() {
+		MovieUserComment mvc = new MovieUserComment();
+		Optional<Movie> mv = movieRepository.findById((long) 1);
+		Optional<User> u = userRepository.findById((long) 1);
+		
+		mvc.setMovie(mv.get());
+		mvc.setUser(u.get());
+		mvc.setMovieUserCommentIsDeleted(false);
+		
+		movieUserCommentRepository.save(mvc);
+		
 		return "OK";
 	}
 }
