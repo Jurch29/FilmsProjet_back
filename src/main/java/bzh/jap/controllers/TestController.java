@@ -160,15 +160,21 @@ public class TestController {
 	
 	@GetMapping("/movieComment")
 	public String movieCommentTest() {
+		List<MovieUserComment> l = new ArrayList<MovieUserComment>();
 		MovieUserComment mvc = new MovieUserComment();
-		Optional<Movie> mv = movieRepository.findById((long) 1);
+		
+		Optional<Movie> mv = movieRepository.findById((long) 25);
 		Optional<User> u = userRepository.findById((long) 1);
 		
 		mvc.setMovie(mv.get());
 		mvc.setUser(u.get());
 		mvc.setMovieUserCommentIsDeleted(false);
 		
-		movieUserCommentRepository.save(mvc);
+		l.add(mvc);
+		
+		u.get().setMovieUserComments(l);
+		
+		userRepository.save(u.get());
 		
 		return "OK";
 	}
