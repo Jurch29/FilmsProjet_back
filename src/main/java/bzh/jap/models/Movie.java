@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
@@ -60,9 +61,23 @@ public class Movie {
 		inverseJoinColumns = @JoinColumn(name = "trailer_id"))
 	private List<Trailer> trailers;
 	
-//	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-//	@JsonBackReference
-//	private List<MovieUserMark> movieUserMark = new ArrayList<MovieUserMark>();
+	@ManyToMany
+	@JoinTable(	name = "MovieAuthor", 
+		joinColumns = @JoinColumn(name = "movie_id"), 
+		inverseJoinColumns = @JoinColumn(name = "author_id"))
+	private List<Author> authors;
+	
+	@ManyToMany
+	@JoinTable(	name = "MovieActor", 
+		joinColumns = @JoinColumn(name = "movie_id"), 
+		inverseJoinColumns = @JoinColumn(name = "actor_id"))
+	private List<Actor> actors;
+	
+	@ManyToMany
+	@JoinTable(	name = "MovieCategory", 
+		joinColumns = @JoinColumn(name = "movie_id"), 
+		inverseJoinColumns = @JoinColumn(name = "category_id"))
+	private List<Category> categories;
 
 	public long getMovieId() {
 		return movieId;
@@ -143,13 +158,28 @@ public class Movie {
 	public void setTrailers(List<Trailer> trailers) {
 		this.trailers = trailers;
 	}
-	
-//	public List<MovieUserMark> getMovieUserMark() {
-//		return movieUserMark;
-//	}
-//
-//	public void setMovieUserMark(List<MovieUserMark> movieUserMark) {
-//		this.movieUserMark = movieUserMark;
-//	}
-	
+
+	public List<Author> getAuthors() {
+		return authors;
+	}
+
+	public void setAuthors(List<Author> authors) {
+		this.authors = authors;
+	}
+
+	public List<Actor> getActors() {
+		return actors;
+	}
+
+	public void setActors(List<Actor> actors) {
+		this.actors = actors;
+	}
+
+	public List<Category> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(List<Category> categories) {
+		this.categories = categories;
+	}
 }

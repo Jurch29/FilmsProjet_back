@@ -45,5 +45,4 @@ public class Trailer {
 	public void setTrailerPath(String trailerPath) {
 		this.trailerPath = trailerPath;
 	}
-	
 }

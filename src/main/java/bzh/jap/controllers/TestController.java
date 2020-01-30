@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import bzh.jap.models.MovieUserKey;
+import bzh.jap.models.Actor;
 import bzh.jap.models.Movie;
 import bzh.jap.models.MovieUserCart;
 import bzh.jap.models.MovieUserMark;
 import bzh.jap.models.Trailer;
 import bzh.jap.models.User;
+import bzh.jap.repository.ActorRepository;
 import bzh.jap.repository.MovieRepository;
 import bzh.jap.repository.MovieUserCartRepository;
 import bzh.jap.repository.MovieUserMarkRepository;
@@ -44,6 +46,9 @@ public class TestController {
 	
 	@Autowired
 	TrailerRepository trailerRepository;
+	
+	@Autowired
+	ActorRepository actorRepository;
 	
 	@GetMapping("/all")
 	public String allAccess() {
@@ -126,6 +131,13 @@ public class TestController {
 		
 		movieRepository.save(mv.get());
 		
+		return "OK";
+	}
+	
+	@GetMapping("/actor")
+	public String actorTest() {
+		Actor actor = new Actor("fiou","chakal");
+		actorRepository.save(actor);
 		return "OK";
 	}
 }
