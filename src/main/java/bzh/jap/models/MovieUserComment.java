@@ -1,6 +1,8 @@
 package bzh.jap.models;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -10,8 +12,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -26,6 +30,16 @@ public class MovieUserComment {
 	@Column(name = "movie_user_comment_id", nullable = false)
 	private long movieUserCommentId;
 	
+	@ManyToOne()
+    @JoinColumn(name="user_id", nullable = false)
+    @JsonManagedReference
+    private User user;
+	
+	@ManyToOne()
+    @JoinColumn(name="movie_id", nullable = false)
+    @JsonManagedReference
+    private Movie movie;
+	
 	@Basic
 	@Column(name = "movie_user_comment_date")
 	private Timestamp movieUserCommentDate;
@@ -33,17 +47,11 @@ public class MovieUserComment {
 	@Column(name = "movie_user_comment_is_deleted", nullable = false, columnDefinition = "TINYINT", length = 1)
 	private boolean movieUserCommentIsDeleted;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
-    @MapsId
-    @JsonManagedReference
-    private User user;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="movie_id")
-    @MapsId
-    @JsonManagedReference
-    private Movie movie;
+	@OneToMany
+	@JoinTable(	name = "MovieUserCommentImage",
+		joinColumns = @JoinColumn(name = "comment_id"),
+		inverseJoinColumns = @JoinColumn(name = "image_id"))
+	private List<Image> images = new ArrayList<Image>();
 	
 	public MovieUserComment() {
 		// TODO Auto-generated constructor stub
@@ -91,6 +99,14 @@ public class MovieUserComment {
 
 	public void setMovie(Movie movie) {
 		this.movie = movie;
+	}
+
+	public List<Image> getImages() {
+		return images;
+	}
+
+	public void setImages(List<Image> images) {
+		this.images = images;
 	}
 	
 }

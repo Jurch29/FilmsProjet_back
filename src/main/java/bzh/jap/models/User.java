@@ -68,7 +68,7 @@ public class User {
 	@JsonBackReference
     private UserActivation userActivation;
 	
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "user")
 	@JsonBackReference
     private List<MovieUserComment> movieUserComments = new ArrayList<MovieUserComment>();
 
@@ -168,7 +168,18 @@ public class User {
 	}
 
 	public void setMovieUserComments(List<MovieUserComment> movieUserComments) {
-		this.movieUserComments = movieUserComments;
+		this.movieUserComments.clear();
+		if (movieUserComments!=null)
+			this.movieUserComments.addAll(movieUserComments);
 	}
 	
+	public void addMovieUserComment(MovieUserComment mvc) {
+		mvc.setUser(this);
+		this.movieUserComments.add(mvc);
+	}
+	
+	public void removeMovieUserComment(MovieUserComment mvc) {
+		mvc.setUser(null);
+		this.movieUserComments.remove(mvc);
+	}
 }

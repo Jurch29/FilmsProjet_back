@@ -1,5 +1,6 @@
 package bzh.jap.controllers;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -160,21 +161,18 @@ public class TestController {
 	
 	@GetMapping("/movieComment")
 	public String movieCommentTest() {
-		List<MovieUserComment> l = new ArrayList<MovieUserComment>();
 		MovieUserComment mvc = new MovieUserComment();
 		
 		Optional<Movie> mv = movieRepository.findById((long) 25);
-		Optional<User> u = userRepository.findById((long) 1);
-		
-		mvc.setMovie(mv.get());
-		mvc.setUser(u.get());
+		Optional<User> u = userRepository.findById((long) 7);
+	
 		mvc.setMovieUserCommentIsDeleted(false);
+		mvc.setMovieUserCommentDate(new Timestamp(System.currentTimeMillis()));
 		
-		l.add(mvc);
+		mv.get().addMovieUserComment(mvc);
+		u.get().addMovieUserComment(mvc);
 		
-		u.get().setMovieUserComments(l);
-		
-		userRepository.save(u.get());
+		movieUserCommentRepository.save(mvc);
 		
 		return "OK";
 	}

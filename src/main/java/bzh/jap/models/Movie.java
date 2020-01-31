@@ -5,10 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -64,33 +62,33 @@ public class Movie {
 	@JoinTable(	name = "MovieTrailer", 
 		joinColumns = @JoinColumn(name = "movie_id"), 
 		inverseJoinColumns = @JoinColumn(name = "trailer_id"))
-	private List<Trailer> trailers;
+	private List<Trailer> trailers = new ArrayList<Trailer>();
 	
 	@OneToMany
 	@JoinTable(	name = "MovieImage", 
 		joinColumns = @JoinColumn(name = "movie_id"), 
 		inverseJoinColumns = @JoinColumn(name = "image_id"))
-	private List<Image> images;
+	private List<Image> images = new ArrayList<Image>();
 	
 	@ManyToMany
 	@JoinTable(	name = "MovieAuthor", 
 		joinColumns = @JoinColumn(name = "movie_id"), 
 		inverseJoinColumns = @JoinColumn(name = "author_id"))
-	private List<Author> authors;
+	private List<Author> authors = new ArrayList<Author>();;
 	
 	@ManyToMany
 	@JoinTable(	name = "MovieActor", 
 		joinColumns = @JoinColumn(name = "movie_id"), 
 		inverseJoinColumns = @JoinColumn(name = "actor_id"))
-	private List<Actor> actors;
+	private List<Actor> actors = new ArrayList<Actor>();
 	
 	@ManyToMany
 	@JoinTable(	name = "MovieCategory", 
 		joinColumns = @JoinColumn(name = "movie_id"),
 		inverseJoinColumns = @JoinColumn(name = "category_id"))
-	private List<Category> categories;
+	private List<Category> categories = new ArrayList<Category>();
 	
-	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "movie")
 	@JsonBackReference
     private List<MovieUserComment> movieUserComments = new ArrayList<MovieUserComment>();
 	
@@ -175,7 +173,9 @@ public class Movie {
 	}
 
 	public void setTrailers(List<Trailer> trailers) {
-		this.trailers = trailers;
+		this.trailers.clear();
+		if (trailers!=null)
+			this.trailers.addAll(trailers);
 	}
 
 	public List<Author> getAuthors() {
@@ -183,7 +183,9 @@ public class Movie {
 	}
 
 	public void setAuthors(List<Author> authors) {
-		this.authors = authors;
+		this.authors.clear();
+		if (authors!=null)
+			this.authors.addAll(authors);
 	}
 
 	public List<Actor> getActors() {
@@ -191,7 +193,9 @@ public class Movie {
 	}
 
 	public void setActors(List<Actor> actors) {
-		this.actors = actors;
+		this.actors.clear();
+		if (actors!=null)
+			this.actors.addAll(actors);
 	}
 
 	public List<Category> getCategories() {
@@ -199,7 +203,9 @@ public class Movie {
 	}
 
 	public void setCategories(List<Category> categories) {
-		this.categories = categories;
+		this.categories.clear();
+		if (categories!=null)
+			this.categories.addAll(categories);
 	}
 
 	public List<Image> getImages() {
@@ -207,7 +213,9 @@ public class Movie {
 	}
 
 	public void setImages(List<Image> images) {
-		this.images = images;
+		this.images.clear();
+		if (images!=null)
+			this.images.addAll(images);
 	}
 
 	public List<MovieUserComment> getMovieUserComments() {
@@ -215,7 +223,18 @@ public class Movie {
 	}
 
 	public void setMovieUserComments(List<MovieUserComment> movieUserComments) {
-		this.movieUserComments = movieUserComments;
+		this.movieUserComments.clear();
+		if (movieUserComments!=null)
+			this.movieUserComments.addAll(movieUserComments);
 	}
 	
+	public void addMovieUserComment(MovieUserComment mvc) {
+		mvc.setMovie(this);
+		this.movieUserComments.add(mvc);
+	}
+	
+	public void removeMovieUserComment(MovieUserComment mvc) {
+		mvc.setMovie(null);
+		this.movieUserComments.remove(mvc);
+	}
 }
