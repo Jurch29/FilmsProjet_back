@@ -87,7 +87,7 @@ public class TestController {
 	@DeleteMapping("/users/{id}")
 	public String deleteStudent(@PathVariable long id) {
 		userRepository.deleteById(id);
-		return "user "+id+"have been deleted";
+		return "user "+id+" have been deleted";
 	}
 	
 	@GetMapping("/users")
