@@ -56,7 +56,7 @@ public class Movie {
 	private double movieMark;
 	
 	@Column(name = "movie_is_deleted", nullable = false, columnDefinition = "TINYINT", length = 1)
-	private boolean userIsDeleted;
+	private boolean movieIsDeleted;
 	
 	@OneToMany
 	@JoinTable(	name = "MovieTrailer", 
@@ -160,12 +160,12 @@ public class Movie {
 		this.movieMark = movieMark;
 	}
 
-	public boolean isUserIsDeleted() {
-		return userIsDeleted;
+	public boolean isMovieIsDeleted() {
+		return movieIsDeleted;
 	}
 
-	public void setUserIsDeleted(boolean userIsDeleted) {
-		this.userIsDeleted = userIsDeleted;
+	public void setMovieIsDeleted(boolean userIsDeleted) {
+		this.movieIsDeleted = userIsDeleted;
 	}
 
 	public List<Trailer> getTrailers() {
