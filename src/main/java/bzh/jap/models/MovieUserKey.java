@@ -1,6 +1,7 @@
 package bzh.jap.models;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.*;
 
@@ -54,5 +55,9 @@ public class MovieUserKey implements Serializable {
         if (!(this.movieId==that.movieId)) return false;
         return this.userId==that.userId;
     }
-
+	
+	@Override
+    public int hashCode() {
+        return Objects.hash(getMovieId(), getUserId());
+    }
 }

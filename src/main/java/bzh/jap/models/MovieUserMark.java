@@ -19,12 +19,12 @@ public class MovieUserMark {
 	@Column(name = "movie_user_mark_mark")
     private double movieUserMarkMark;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user_id")
 	@MapsId("user_id")
     private User user;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="movie_id")
 	@MapsId("movie_id")
     private Movie movie;

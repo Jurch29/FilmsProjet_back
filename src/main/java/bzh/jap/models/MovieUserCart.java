@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "MovieUserCart")
 public class MovieUserCart {
@@ -19,12 +21,12 @@ public class MovieUserCart {
 	@Column(name = "movie_user_cart_count")
     private int movieUserCartCount;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user_id")
 	@MapsId("user_id")
     private User user;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="movie_id")
 	@MapsId("movie_id")
     private Movie movie;
@@ -70,5 +72,5 @@ public class MovieUserCart {
 	public void setMovie(Movie movie) {
 		this.movie = movie;
 	}
-
+	
 }
