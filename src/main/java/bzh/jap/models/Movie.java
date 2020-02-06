@@ -42,6 +42,10 @@ public class Movie {
 	private String movieImagePath;
 	
 	@Size(max = 255)
+	@Column(name = "movie_trailer_path")
+	private String movieTrailerPath;
+	
+	@Size(max = 255)
 	@Column(name = "movie_file_path")
 	private String movieFilePath;
 	
@@ -127,6 +131,14 @@ public class Movie {
 	public void setMovieImagePath(String movieImagePath) {
 		this.movieImagePath = movieImagePath;
 	}
+	
+	public String getMovieTrailerPath() {
+		return movieTrailerPath;
+	}
+
+	public void setMovieTrailerPath(String movieTrailerPath) {
+		this.movieTrailerPath = movieTrailerPath;
+	}
 
 	public String getMovieFilePath() {
 		return movieFilePath;
@@ -167,7 +179,7 @@ public class Movie {
 	public void setMovieIsDeleted(boolean userIsDeleted) {
 		this.movieIsDeleted = userIsDeleted;
 	}
-
+	
 	public List<Trailer> getTrailers() {
 		return trailers;
 	}
