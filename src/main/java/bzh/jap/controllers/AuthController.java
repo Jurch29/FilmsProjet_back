@@ -100,7 +100,7 @@ public class AuthController {
 	
 	//ObjectNode nous permet de renvoyer un objet json customisé
 	@GetMapping("/activation")
-	public ObjectNode activateUser(@RequestParam("user_id") String id, @RequestParam("activation_code") String code) {
+	public ObjectNode activateUser(@RequestParam("user_id") String id, @RequestParam("user_activation_code") String code) {
 		
 		Boolean result = false;
 		java.util.Optional<UserActivation> userActivation = userActivationRepository.findById(Long.parseLong(id));

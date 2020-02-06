@@ -56,6 +56,9 @@ public class TestController {
 	@Autowired
 	MovieUserCommentRepository movieUserCommentRepository;
 	
+	@Autowired
+	MovieCommentsRepository movieCommentsRepository;
+	
 	//Test par rôle
 	
 	@GetMapping("/all")
@@ -82,6 +85,8 @@ public class TestController {
 	}
 	
 	//Test sur le model
+	
+	//MARIADB
 	
 	@GetMapping("/actor/{id}")
 	public Optional<Actor> getActorTest(@PathVariable long id) {
@@ -207,7 +212,7 @@ public class TestController {
 		
 		Optional<Movie> mv = movieRepository.findById((long)lookupRequestObject.get("movieId"));
 		Optional<User> u = userRepository.findById((long)lookupRequestObject.get("userId"));
-	
+		
 		mvc.setMovieUserCommentIsDeleted(false);
 		mvc.setMovieUserCommentDate(new Timestamp(System.currentTimeMillis()));
 		
@@ -233,5 +238,21 @@ public class TestController {
 	@GetMapping("/users/{id}")
 	public Optional<User> retrieveUser(@PathVariable long id) {
 		return userRepository.findById(id);
+	}
+	
+	//MONGODB
+	
+	@GetMapping("/comments/{id}")
+	public MovieComments getCommentsTest(@PathVariable String id) {
+		return movieCommentsRepository.findByCommentId("1");
+	}
+	
+	@PostMapping("/comments")
+	public String postCommentsTest(@RequestBody Map<String, Object> lookupRequestObject) {
+		MovieComments ms = new MovieComments();
+		ms.setCommentId((String)lookupRequestObject.get("commentId"));
+		ms.setCommentContent((String)lookupRequestObject.get("commentContent"));
+		movieCommentsRepository.save(ms);
+		return "OK";
 	}
 }

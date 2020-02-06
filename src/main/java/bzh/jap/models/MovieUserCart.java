@@ -9,14 +9,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "MovieUserCart")
 public class MovieUserCart {
 	
 	@EmbeddedId
-	private MovieUserKey embeddedKey;
+	private MovieUserKey embeddedKeyMovieUser;
 	
 	@Column(name = "movie_user_cart_count")
     private int movieUserCartCount;
@@ -24,11 +26,13 @@ public class MovieUserCart {
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user_id")
 	@MapsId("user_id")
+	@JsonIgnore
     private User user;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="movie_id")
 	@MapsId("movie_id")
+	@JsonIgnore
     private Movie movie;
 	
 	public MovieUserCart() {
@@ -37,16 +41,16 @@ public class MovieUserCart {
 	
 	public MovieUserCart(MovieUserKey muk, int quantity) {
 		// TODO Auto-generated constructor stub
-		this.embeddedKey = muk;
+		this.embeddedKeyMovieUser = muk;
 		this.movieUserCartCount = quantity;
 	}
 	
-	public MovieUserKey getEmbeddedKey() {
-		return embeddedKey;
+	public MovieUserKey getEmbeddedKeyMovieUser() {
+		return embeddedKeyMovieUser;
 	}
 
-	public void setEmbeddedKey(MovieUserKey embeddedKey) {
-		this.embeddedKey = embeddedKey;
+	public void setEmbeddedKeyMovieUser(MovieUserKey embeddedKey) {
+		this.embeddedKeyMovieUser = embeddedKey;
 	}
 	
 	public int getMovieUserCartCount() {

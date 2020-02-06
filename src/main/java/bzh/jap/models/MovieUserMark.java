@@ -9,12 +9,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "MovieUserMark")
 public class MovieUserMark {
 
 	@EmbeddedId
-	private MovieUserKey embeddedKey;
+	private MovieUserKey embeddedKeyMovieUser;
 	
 	@Column(name = "movie_user_mark_mark")
     private double movieUserMarkMark;
@@ -22,11 +24,13 @@ public class MovieUserMark {
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user_id")
 	@MapsId("user_id")
+	@JsonIgnore
     private User user;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="movie_id")
 	@MapsId("movie_id")
+	@JsonIgnore
     private Movie movie;
 	
 	public MovieUserMark() {
@@ -35,16 +39,16 @@ public class MovieUserMark {
 	
 	public MovieUserMark(MovieUserKey muk, double note) {
 		// TODO Auto-generated constructor stub
-		this.embeddedKey = muk;
+		this.embeddedKeyMovieUser = muk;
 		this.movieUserMarkMark = note;
 	}
 	
 	public MovieUserKey getEmbeddedKey() {
-		return embeddedKey;
+		return embeddedKeyMovieUser;
 	}
 
 	public void setEmbeddedKey(MovieUserKey embeddedKey) {
-		this.embeddedKey = embeddedKey;
+		this.embeddedKeyMovieUser = embeddedKey;
 	}
 
 	public double getMovieUserMarkMark() {
