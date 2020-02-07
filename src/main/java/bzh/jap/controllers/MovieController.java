@@ -17,7 +17,7 @@ import bzh.jap.repository.MovieRepository;
 public class MovieController {
 	
 	@Autowired
-	MovieRepository movieRepository;
+	private MovieRepository movieRepository;
 	
 	@GetMapping("/movies")
 	public List<Movie> retrieveAllUsers() {

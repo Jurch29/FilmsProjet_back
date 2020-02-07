@@ -3,18 +3,21 @@ package bzh.jap.payload;
 import java.util.List;
 
 public class JwtResponse {
+	
 	private String token;
 	private String type = "Bearer";
-	private long id;
-	private String username;
-	private String email;
+	private long userId;
+	private String userLogin;
+	private String userFirstname;
+	private String userLastname;
+	private String userEmail;
 	private List<String> roles;
 
 	public JwtResponse(String token, long id, String username, String email, List<String> roles) {
 		this.token = token;
-		this.id = id;
-		this.username = username;
-		this.email = email;
+		this.userId = id;
+		this.userLogin = username;
+		this.userEmail = email;
 		this.roles = roles;
 	}
 
@@ -26,39 +29,59 @@ public class JwtResponse {
 		this.token = token;
 	}
 
-	public String getTokenType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setTokenType(String tokenType) {
-		this.type = tokenType;
+	public void setType(String type) {
+		this.type = type;
 	}
 
-	public long getId() {
-		return id;
+	public long getUserId() {
+		return userId;
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	public void setUserId(long userId) {
+		this.userId = userId;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getUserLogin() {
+		return userLogin;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUserLogin(String userLogin) {
+		this.userLogin = userLogin;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getUserFirstname() {
+		return userFirstname;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUserFirstname(String userFirstname) {
+		this.userFirstname = userFirstname;
+	}
+
+	public String getUserLastname() {
+		return userLastname;
+	}
+
+	public void setUserLastname(String userLastname) {
+		this.userLastname = userLastname;
+	}
+
+	public String getUserEmail() {
+		return userEmail;
+	}
+
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
 	}
 
 	public List<String> getRoles() {
 		return roles;
+	}
+
+	public void setRoles(List<String> roles) {
+		this.roles = roles;
 	}
 }

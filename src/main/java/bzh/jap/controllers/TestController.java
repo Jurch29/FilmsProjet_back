@@ -27,37 +27,37 @@ import bzh.jap.repository.*;
 public class TestController {
 	
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
 	
 	@Autowired
-	MovieUserMarkRepository movieUserMarkRepository;
+	private MovieUserMarkRepository movieUserMarkRepository;
 	
 	@Autowired
-	MovieUserCartRepository movieUserCartRepository;
+	private MovieUserCartRepository movieUserCartRepository;
 	
 	@Autowired
-	MovieRepository movieRepository;
+	private MovieRepository movieRepository;
 	
 	@Autowired
-	TrailerRepository trailerRepository;
+	private TrailerRepository trailerRepository;
 	
 	@Autowired
-	ActorRepository actorRepository;
+	private ActorRepository actorRepository;
 	
 	@Autowired
-	AuthorRepository authorRepository;
+	private AuthorRepository authorRepository;
 	
 	@Autowired
-	ImageRepository imageRepository;
+	private ImageRepository imageRepository;
 	
 	@Autowired
-	CategoryRepository categoryRepository;
+	private CategoryRepository categoryRepository;
 	
 	@Autowired
-	MovieUserCommentRepository movieUserCommentRepository;
+	private MovieUserCommentRepository movieUserCommentRepository;
 	
 	@Autowired
-	MovieCommentsRepository movieCommentsRepository;
+	private MovieCommentsRepository movieCommentsRepository;
 	
 	//Test par rôle
 	
