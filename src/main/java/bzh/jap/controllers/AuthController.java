@@ -94,8 +94,10 @@ public class AuthController {
 			return ResponseEntity.ok(new UserActivationResponse(userDetails.getId(), true));
 		}
 		
+		User user = userRepository.findById(userDetails.getId()).get();
+		
 		//Pas de code d'activation : pas la premiere connexion on renvoie une réponse jwtresponse
-		return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getId(),userDetails.getUsername(),userDetails.getEmail(),roles));
+		return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getId(),userDetails.getUsername(),user.getUserFirstname(),user.getUserLastname(),userDetails.getEmail(),roles));
 	}
 	
 	//ObjectNode nous permet de renvoyer un objet json customisé
