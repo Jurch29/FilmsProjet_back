@@ -59,7 +59,7 @@ public class TestController {
 	@Autowired
 	private MovieCommentsRepository movieCommentsRepository;
 	
-	//Test par rôle
+	//Test par rï¿½le
 	
 	@GetMapping("/all")
 	public String allAccess() {

@@ -89,24 +89,24 @@ public class AuthController {
 		
 		java.util.Optional<UserActivation> userActivation = userActivationRepository.findById(userDetails.getId());
 		
-		//code d'activation present pour ce user on envoie une réponse UserActivationResponse
-		if (!userActivation.isEmpty()) {
+		//code d'activation present pour ce user on envoie une rï¿½ponse UserActivationResponse
+		if (userActivation.isPresent()) {
 			return ResponseEntity.ok(new UserActivationResponse(userDetails.getId(), true));
 		}
 		
 		User user = userRepository.findById(userDetails.getId()).get();
 		
-		//Pas de code d'activation : pas la premiere connexion on renvoie une réponse jwtresponse
+		//Pas de code d'activation : pas la premiere connexion on renvoie une rï¿½ponse jwtresponse
 		return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getId(),userDetails.getUsername(),user.getUserFirstname(),user.getUserLastname(),userDetails.getEmail(),roles));
 	}
 	
-	//ObjectNode nous permet de renvoyer un objet json customisé
+	//ObjectNode nous permet de renvoyer un objet json customisï¿½
 	@GetMapping("/activation")
 	public ObjectNode activateUser(@RequestParam("user_id") String id, @RequestParam("user_activation_code") String code) {
 		
 		Boolean result = false;
 		java.util.Optional<UserActivation> userActivation = userActivationRepository.findById(Long.parseLong(id));
-		//Le code est bon on supprime la ligne useractivation qui correspond à ce user + renvoie true
+		//Le code est bon on supprime la ligne useractivation qui correspond ï¿½ ce user + renvoie true
 		if (userActivation.get().getUserActivationCode().equals(code)) {
 			userActivationRepository.delete(userActivation.get());
 			result = true;
