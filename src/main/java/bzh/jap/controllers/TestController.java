@@ -59,6 +59,9 @@ public class TestController {
 	@Autowired
 	private MovieCommentsRepository movieCommentsRepository;
 	
+	@Autowired
+	private MovieDescriptionRepository movieDescriptionRepository;
+	
 	//Test par r�le
 	
 	@GetMapping("/all")
@@ -244,7 +247,7 @@ public class TestController {
 	
 	@GetMapping("/comments/{id}")
 	public MovieComments getCommentsTest(@PathVariable String id) {
-		return movieCommentsRepository.findByCommentId("1");
+		return movieCommentsRepository.findByCommentId(id);
 	}
 	
 	@PostMapping("/comments")
@@ -253,6 +256,20 @@ public class TestController {
 		ms.setCommentId((String)lookupRequestObject.get("commentId"));
 		ms.setCommentContent((String)lookupRequestObject.get("commentContent"));
 		movieCommentsRepository.save(ms);
+		return "OK";
+	}
+	
+	@GetMapping("/synopsis/{id}")
+	public MovieDescription getSynopsisTest(@PathVariable String id) {
+		return movieDescriptionRepository.findBymovieId(id);
+	}
+	
+	@PostMapping("/synopsis")
+	public String postSynopsisTest(@RequestBody Map<String, Object> lookupRequestObject) {
+		MovieDescription ms = new MovieDescription();
+		ms.setMovieId((String)lookupRequestObject.get("movieId"));
+		ms.setMovieDescription((String)lookupRequestObject.get("movieDescription"));
+		movieDescriptionRepository.save(ms);
 		return "OK";
 	}
 }

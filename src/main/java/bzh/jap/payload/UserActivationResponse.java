@@ -2,20 +2,20 @@ package bzh.jap.payload;
 
 public class UserActivationResponse {
 	
-	private long id;
+	private long userId;
 	private boolean isToActivate;
 	
 	public UserActivationResponse(long id, boolean isToActivate) {
-		this.id = id;
+		this.userId = id;
 		this.isToActivate = isToActivate;
 	}
 
-	public long getId() {
-		return id;
+	public long getuserId() {
+		return userId;
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	public void setuserId(long id) {
+		this.userId = id;
 	}
 
 	public boolean isToActivate() {
