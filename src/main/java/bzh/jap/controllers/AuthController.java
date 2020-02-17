@@ -199,14 +199,11 @@ public class AuthController {
 		}
 		
 		User user = userRepository.findByUserEmail((String) payload.get("user_email")).get();
+
 		//Envoie mail
-		GeneralService service = new GeneralService();
-		UserActivation tempPWD = new UserActivation(service.java8AlphaNumericGenerator(8));
 		Email mail = new Email();
-		mail.sendEmail(javaMailSender, "Bonjour "+user.getUserFirstname()+", \n suite à votre demande veuillez retrouver ci-dessous les informations de connexion concernant votre compte.\n"
-				+ "Veuillez noter que votre mot de passe à été réinitialisé, si vous souhaitez le changez à nouveau rendez-vous"
-				+ "dans l'espace mon compte du site.\n"
-				+ "Login : "+user.getUserLogin()+"\nMot de passe : "+tempPWD, "Récupération des identifiants de connexion", (String) payload.get("user_email"));
+		mail.sendEmail(javaMailSender, "Bonjour "+user.getUserFirstname()+", \nsuite à votre demande veuillez retrouver ci-dessous les informations de connexion concernant votre compte.\n\n"
+				+ "Login : "+user.getUserLogin()+"\nMot de passe : "+user.getUserPassword(), "Récupération des identifiants de connexion", (String) payload.get("user_email"));
 		
 		return ResponseEntity.ok(new MessageResponse("Un mail de récupération à été envoyé."));
 	}
