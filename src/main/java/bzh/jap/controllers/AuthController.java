@@ -2,12 +2,12 @@ package bzh.jap.controllers;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.apache.el.stream.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -123,7 +123,7 @@ public class AuthController {
 		if (userRepository.existsByUserLogin(signUpRequest.getUsername())) {
 			return ResponseEntity
 					.badRequest()
-					.body(new MessageResponse("Error: Username is already taken!"));
+					.body(new MessageResponse("Error: Userlogin is already taken!"));
 		}
 
 		if (userRepository.existsByUserEmail(signUpRequest.getEmail())) {
@@ -181,5 +181,33 @@ public class AuthController {
 				+ ua.getUserActivationCode()+" afin d'activer votre compte.", "Code d'activation Ez-Movies", user.getUserEmail());
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+	}
+	
+	@PostMapping("/credentialsRecovery")
+	public ResponseEntity<?> sendCredentialsRecovery(@Valid @RequestBody Map<String, Object> payload) {
+		
+		if (payload.size() != 1 && !payload.containsKey("user_email")) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Erreur: requete mal forme."));
+		}
+		
+		if (!userRepository.existsByUserEmail((String) payload.get("user_email"))) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Aucun compte n'existe avec cette adresse mail."));
+		}
+		
+		User user = userRepository.findByUserEmail((String) payload.get("user_email")).get();
+		//Envoie mail
+		GeneralService service = new GeneralService();
+		UserActivation tempPWD = new UserActivation(service.java8AlphaNumericGenerator(8));
+		Email mail = new Email();
+		mail.sendEmail(javaMailSender, "Bonjour "+user.getUserFirstname()+", \n suite à votre demande veuillez retrouver ci-dessous les informations de connexion concernant votre compte.\n"
+				+ "Veuillez noter que votre mot de passe à été réinitialisé, si vous souhaitez le changez à nouveau rendez-vous"
+				+ "dans l'espace mon compte du site.\n"
+				+ "Login : "+user.getUserLogin()+"\nMot de passe : "+tempPWD, "Récupération des identifiants de connexion", (String) payload.get("user_email"));
+		
+		return ResponseEntity.ok(new MessageResponse("Un mail de récupération à été envoyé."));
 	}
 }
