@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -199,6 +200,8 @@ public class AuthController {
 		}
 		
 		User user = userRepository.findByUserEmail((String) payload.get("user_email")).get();
+		
+		String token = UUID.randomUUID().toString();
 
 		//Envoie mail
 		Email mail = new Email();
