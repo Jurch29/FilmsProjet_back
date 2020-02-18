@@ -1,8 +1,10 @@
 package bzh.jap.controllers;
 
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -10,6 +12,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import bzh.jap.models.ERole;
+import bzh.jap.models.PasswordResetToken;
 import bzh.jap.models.Role;
 import bzh.jap.models.User;
 import bzh.jap.models.UserActivation;
@@ -37,6 +41,7 @@ import bzh.jap.payload.LoginRequest;
 import bzh.jap.payload.MessageResponse;
 import bzh.jap.payload.SignupRequest;
 import bzh.jap.payload.UserActivationResponse;
+import bzh.jap.repository.PasswordResetTokenRepository;
 import bzh.jap.repository.RoleRepository;
 import bzh.jap.repository.UserActivationRepository;
 import bzh.jap.repository.UserRepository;
@@ -66,6 +71,9 @@ public class AuthController {
 	private UserActivationRepository userActivationRepository;
 
 	@Autowired
+	private PasswordResetTokenRepository passwordResetTokenRepository;
+	
+	@Autowired
 	private PasswordEncoder encoder;
 
 	@Autowired
@@ -73,6 +81,9 @@ public class AuthController {
 	
 	@Autowired
 	private ObjectMapper mapper;
+	
+	@Value("${environnementurl.execution}")
+	private String execenv;
 
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -201,12 +212,29 @@ public class AuthController {
 		
 		User user = userRepository.findByUserEmail((String) payload.get("user_email")).get();
 		
-		String token = UUID.randomUUID().toString();
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		
+		Optional<PasswordResetToken> pwdrtkO = passwordResetTokenRepository.findById(user.getUserId());
+		PasswordResetToken pwdrtk;
+		
+		if (pwdrtkO.isPresent()) {
+			pwdrtk = pwdrtkO.get();
+			pwdrtk.setUserResetToken(UUID.randomUUID().toString());
+			pwdrtk.setTokenExpiration(new Timestamp(System.currentTimeMillis()));
+		}
+		else {
+			pwdrtk = new PasswordResetToken(UUID.randomUUID().toString(),new Timestamp(System.currentTimeMillis()));
+			pwdrtk.setUser(user);
+			user.setPasswordResetToken(pwdrtk);
+		}
+		
+		passwordResetTokenRepository.save(pwdrtk);
 
 		//Envoie mail
 		Email mail = new Email();
-		mail.sendEmail(javaMailSender, "Bonjour "+user.getUserFirstname()+", \nsuite à votre demande veuillez retrouver ci-dessous les informations de connexion concernant votre compte.\n\n"
-				+ "Login : "+user.getUserLogin()+"\nMot de passe : "+user.getUserPassword(), "Récupération des identifiants de connexion", (String) payload.get("user_email"));
+		mail.sendEmail(javaMailSender, "Bonjour "+user.getUserFirstname()+", \nsuite à votre demande veuillez retrouver ci-dessous un lien vous permettant"
+				+ " de réinitialiser votre mot de passe.\n\n"
+				+ "http://"+this.execenv+"/resetpassword?token="+pwdrtk.getUserResetToken(), "Récupération des identifiants de connexion", (String) payload.get("user_email"));
 		
 		return ResponseEntity.ok(new MessageResponse("Un mail de récupération à été envoyé."));
 	}

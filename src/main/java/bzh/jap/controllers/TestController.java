@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import bzh.jap.models.*;
 import bzh.jap.repository.*;
+import bzh.jap.util.GeneralService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -55,6 +57,9 @@ public class TestController {
 	
 	@Autowired
 	private MovieUserCommentRepository movieUserCommentRepository;
+	
+	@Autowired
+	private PasswordResetTokenRepository passwordResetTokenRepository;
 	
 	@Autowired
 	private MovieCommentsRepository movieCommentsRepository;
@@ -241,6 +246,39 @@ public class TestController {
 	@GetMapping("/users/{id}")
 	public Optional<User> retrieveUser(@PathVariable long id) {
 		return userRepository.findById(id);
+	}
+	
+	@DeleteMapping("/passwordResetToken/{id}")
+	public String deletepasswordResetToken(@PathVariable long id) {
+		passwordResetTokenRepository.deleteById(id);
+		return "passwordResetToken "+id+" have been deleted";
+	}
+	
+	@GetMapping("/passwordResetToken/{id}")
+	public Optional<PasswordResetToken> getPasswordResetTokenTest(@PathVariable long id) {
+		return passwordResetTokenRepository.findById(id);
+	}
+	
+	@PostMapping("/passwordResetToken")
+	public String postPsswdResetToken(@RequestBody Map<String, Object> lookupRequestObject) {
+		User user = userRepository.findByUserEmail((String) lookupRequestObject.get("user_email")).get();
+		
+		Optional<PasswordResetToken> pwdrtkO = passwordResetTokenRepository.findById(user.getUserId());
+		PasswordResetToken pwdrtk;
+		
+		if (pwdrtkO.isPresent()) {
+			pwdrtk = pwdrtkO.get();
+			pwdrtk.setUserResetToken(UUID.randomUUID().toString());
+			pwdrtk.setTokenExpiration(new Timestamp(System.currentTimeMillis()));
+		}
+		else {
+			pwdrtk = new PasswordResetToken(UUID.randomUUID().toString(),new Timestamp(System.currentTimeMillis()));
+			pwdrtk.setUser(user);
+			user.setPasswordResetToken(pwdrtk);
+		}
+			
+		passwordResetTokenRepository.save(pwdrtk);
+		return "OK";
 	}
 	
 	//MONGODB

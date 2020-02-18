@@ -68,6 +68,10 @@ public class User {
 	@JsonBackReference
     private UserActivation userActivation;
 	
+	@OneToOne(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
+	@JsonBackReference
+    private PasswordResetToken passwordResetToken;
+	
 	@OneToMany(mappedBy = "user")
 	@JsonBackReference
     private List<MovieUserComment> movieUserComments = new ArrayList<MovieUserComment>();
@@ -161,6 +165,14 @@ public class User {
 
 	public void setUserActivation(UserActivation userActivation) {
 		this.userActivation = userActivation;
+	}
+	
+	public PasswordResetToken getPasswordResetToken() {
+		return passwordResetToken;
+	}
+
+	public void setPasswordResetToken(PasswordResetToken passwordResetToken) {
+		this.passwordResetToken = passwordResetToken;
 	}
 
 	public List<MovieUserComment> getMovieUserComments() {
