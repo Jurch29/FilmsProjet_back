@@ -20,7 +20,7 @@ public class MovieController {
 	private MovieRepository movieRepository;
 	
 	@GetMapping("/movies")
-	public List<Movie> retrieveAllUsers() {
+	public List<Movie> retrieveAllMovies() {
 		return movieRepository.findAll();
 	}
 

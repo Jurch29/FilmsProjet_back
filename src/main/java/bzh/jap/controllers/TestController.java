@@ -9,6 +9,8 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import bzh.jap.models.*;
 import bzh.jap.repository.*;
+import bzh.jap.security.services.UserDetailsImpl;
 import bzh.jap.util.GeneralService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -67,11 +70,19 @@ public class TestController {
 	@Autowired
 	private MovieDescriptionRepository movieDescriptionRepository;
 	
-	//Test par r�le
+	//Test par role
 	
 	@GetMapping("/all")
 	public String allAccess() {
 		return "Public Content.";
+	}
+	
+	@GetMapping("/testuser")
+	public String testOnUser() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+		System.out.println(userDetails.getUsername());
+		return "OK";
 	}
 	
 	@GetMapping("/user")

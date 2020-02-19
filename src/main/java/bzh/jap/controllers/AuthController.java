@@ -1,6 +1,7 @@
 package bzh.jap.controllers;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import bzh.jap.models.UserActivation;
 import bzh.jap.payload.JwtResponse;
 import bzh.jap.payload.LoginRequest;
 import bzh.jap.payload.MessageResponse;
+import bzh.jap.payload.ResetPasswordRequest;
 import bzh.jap.payload.SignupRequest;
 import bzh.jap.payload.UserActivationResponse;
 import bzh.jap.repository.PasswordResetTokenRepository;
@@ -212,7 +214,11 @@ public class AuthController {
 		
 		User user = userRepository.findByUserEmail((String) payload.get("user_email")).get();
 		
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		Timestamp ts = new Timestamp(System.currentTimeMillis());
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(ts);
+		cal.add(Calendar.DAY_OF_WEEK, 1);
+		ts.setTime(cal.getTime().getTime());
 		
 		Optional<PasswordResetToken> pwdrtkO = passwordResetTokenRepository.findById(user.getUserId());
 		PasswordResetToken pwdrtk;
@@ -220,10 +226,10 @@ public class AuthController {
 		if (pwdrtkO.isPresent()) {
 			pwdrtk = pwdrtkO.get();
 			pwdrtk.setUserResetToken(UUID.randomUUID().toString());
-			pwdrtk.setTokenExpiration(new Timestamp(System.currentTimeMillis()));
+			pwdrtk.setTokenExpiration(ts);
 		}
 		else {
-			pwdrtk = new PasswordResetToken(UUID.randomUUID().toString(),new Timestamp(System.currentTimeMillis()));
+			pwdrtk = new PasswordResetToken(UUID.randomUUID().toString(),ts);
 			pwdrtk.setUser(user);
 			user.setPasswordResetToken(pwdrtk);
 		}
@@ -234,8 +240,45 @@ public class AuthController {
 		Email mail = new Email();
 		mail.sendEmail(javaMailSender, "Bonjour "+user.getUserFirstname()+", \nsuite à votre demande veuillez retrouver ci-dessous un lien vous permettant"
 				+ " de réinitialiser votre mot de passe.\n\n"
-				+ "http://"+this.execenv+"/resetpassword?token="+pwdrtk.getUserResetToken(), "Récupération des identifiants de connexion", (String) payload.get("user_email"));
+				+ "http://"+this.execenv+"/passwordreset?token="+pwdrtk.getUserResetToken(), "Récupération des identifiants de connexion", (String) payload.get("user_email"));
 		
 		return ResponseEntity.ok(new MessageResponse("Un mail de récupération à été envoyé."));
+	}
+	
+	@GetMapping("/ispasswordresettokenvalid")
+	public ResponseEntity<?> getPasswordResetToken(@RequestParam("token") String token){
+		
+		Optional<PasswordResetToken> pwdrtk = passwordResetTokenRepository.findByUserResetToken(token);
+		
+		if (pwdrtk.isEmpty()) {
+			return ResponseEntity.ok(new MessageResponse("invalid token"));
+		}
+		if (pwdrtk.get().getTokenExpiration().before(new Timestamp(System.currentTimeMillis()))) {
+			return ResponseEntity.ok(new MessageResponse("expired token"));
+		}
+		return ResponseEntity.ok(new MessageResponse("valid token"));
+	}
+	
+	@PostMapping("resetpassword")
+	public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
+		
+		Optional<PasswordResetToken> pwdrtk = passwordResetTokenRepository.findByUserResetToken(resetPasswordRequest.getToken());
+		
+		if (pwdrtk.isEmpty()) {
+			return ResponseEntity.ok(new MessageResponse("invalid token"));
+		}
+		if (pwdrtk.get().getTokenExpiration().before(new Timestamp(System.currentTimeMillis()))) {
+			return ResponseEntity.ok(new MessageResponse("expired token"));
+		}
+		
+		Optional<User> user = userRepository.findById(pwdrtk.get().getUserId());
+		
+		user.get().setUserPassword(encoder.encode(resetPasswordRequest.getPassword()));
+		
+		userRepository.save(user.get());
+		
+		passwordResetTokenRepository.deleteById(pwdrtk.get().getUserId());
+		
+		return ResponseEntity.ok(new MessageResponse("Mot de passe change"));
 	}
 }
