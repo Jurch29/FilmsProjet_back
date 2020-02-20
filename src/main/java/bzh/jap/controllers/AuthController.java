@@ -240,7 +240,7 @@ public class AuthController {
 		Email mail = new Email();
 		mail.sendEmail(javaMailSender, "Bonjour "+user.getUserFirstname()+", \nsuite à votre demande veuillez retrouver ci-dessous un lien vous permettant"
 				+ " de réinitialiser votre mot de passe.\n\n"
-				+ "http://"+this.execenv+"/passwordreset?token="+pwdrtk.getUserResetToken(), "Récupération des identifiants de connexion", (String) payload.get("user_email"));
+				+ "http://"+this.execenv+"/passwordreset?token="+pwdrtk.getUserResetToken()+"&user_email="+(String) payload.get("user_email"), "Récupération des identifiants de connexion", (String) payload.get("user_email"));
 		
 		return ResponseEntity.ok(new MessageResponse("Un mail de récupération à été envoyé."));
 	}
