@@ -165,6 +165,11 @@ public class TestController {
 		return movieUserCartRepository.findById(new MovieUserKey(movieId, userId));
 	}
 	
+	@GetMapping("/usercart/{id}")
+	public List<MovieUserCart> getUserCartByUserId(@PathVariable long id) {
+		return movieUserCartRepository.findByEmbeddedKeyMovieUserUserId(id);
+	}
+	
 	@PostMapping("/usercart")
 	public String postUserCartTest(@RequestBody Map<String, Object> lookupRequestObject) {
 		Optional<Movie> mv = movieRepository.findById((long) lookupRequestObject.get("movieId"));
