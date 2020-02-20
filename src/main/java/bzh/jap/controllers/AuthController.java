@@ -134,23 +134,23 @@ public class AuthController {
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 		
-		if (userRepository.existsByUserLogin(signUpRequest.getUsername())) {
+		if (userRepository.existsByUserLogin(signUpRequest.getUserLogin())) {
 			return ResponseEntity
 					.badRequest()
 					.body(new MessageResponse("Error: Userlogin is already taken!"));
 		}
 
-		if (userRepository.existsByUserEmail(signUpRequest.getEmail())) {
+		if (userRepository.existsByUserEmail(signUpRequest.getUserEmail())) {
 			return ResponseEntity
 					.badRequest()
 					.body(new MessageResponse("Error: Email is already in use!"));
 		}
 
 		//Creer un nouvel utilisateur
-		User user = new User(signUpRequest.getLastname() , signUpRequest.getFirstname(), signUpRequest.getEmail(), signUpRequest.getUsername(),
-							 encoder.encode(signUpRequest.getPassword()));
+		User user = new User(signUpRequest.getUserLastname() , signUpRequest.getUserFirstname(), signUpRequest.getUserEmail(), signUpRequest.getUserLogin(),
+							 encoder.encode(signUpRequest.getUserPassword()));
 		
-		user.setUserIsDeleted(false);  
+		user.setUserIsDeleted(false);
 
 		Set<String> strRoles = signUpRequest.getRole();
 		Set<Role> roles = new HashSet<>();
