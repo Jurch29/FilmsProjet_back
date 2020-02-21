@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import bzh.jap.models.*;
+import bzh.jap.payload.MergeCartRequest;
 import bzh.jap.repository.*;
 import bzh.jap.security.services.UserDetailsImpl;
 import bzh.jap.util.GeneralService;
@@ -181,6 +184,13 @@ public class TestController {
 		
 		movieUserCartRepository.save(m);
 		return "OK";
+	}
+	
+	@PostMapping("/usercartlines")
+	public String postUserCartLines(@Valid @RequestBody MergeCartRequest mergeCartRequest) {
+		System.out.println(mergeCartRequest.getLocalCart());
+		System.out.println(mergeCartRequest.getUserId());
+		return "ok";
 	}
 	
 	@GetMapping("/usermark")
