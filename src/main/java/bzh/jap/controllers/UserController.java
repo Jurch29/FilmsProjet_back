@@ -46,8 +46,6 @@ public class UserController {
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	public ResponseEntity<?> mergeCart(@Valid @RequestBody MergeCartRequest mergeCartRequest) {
 		
-		System.out.println(mergeCartRequest);
-		
 		System.out.println(mergeCartRequest.getLocalCart());
 		System.out.println(mergeCartRequest.getUserId());
 		
