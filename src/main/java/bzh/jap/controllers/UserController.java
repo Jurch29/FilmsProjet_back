@@ -1,6 +1,14 @@
 package bzh.jap.controllers;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +22,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import bzh.jap.models.CartHistory;
+import bzh.jap.models.Items;
+import bzh.jap.models.Movie;
 import bzh.jap.models.MovieUserCart;
+import bzh.jap.models.MovieUserKey;
+import bzh.jap.models.Purchases;
 import bzh.jap.models.User;
 import bzh.jap.payload.MergeCartRequest;
 import bzh.jap.payload.MessageResponse;
+import bzh.jap.repository.CartHistoryRepository;
 import bzh.jap.repository.MovieRepository;
 import bzh.jap.repository.MovieUserCartRepository;
 import bzh.jap.repository.UserRepository;
@@ -36,6 +50,9 @@ public class UserController {
 	@Autowired
 	private MovieRepository movieRepository;
 	
+	@Autowired
+	private CartHistoryRepository cartHistoryRepository;
+	
 	@GetMapping("/cart/{id}")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	public List<MovieUserCart> getUserCartByUserId(@PathVariable long id) {
@@ -44,19 +61,97 @@ public class UserController {
 
 	@PostMapping("/cartmerge")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-	public ResponseEntity<?> mergeCart(@Valid @RequestBody MergeCartRequest mergeCartRequest) {
-		
-		System.out.println(mergeCartRequest.getLocalCart());
-		System.out.println(mergeCartRequest.getUserId());
-		
+	public ResponseEntity<?> mergeCart(@Valid @RequestBody MergeCartRequest mergeCartRequest) { //Peut etre mieux fait ?
 		User user = userRepository.findById(mergeCartRequest.getUserId()).get();
+		List<MovieUserCart> cartsList = new ArrayList<MovieUserCart>();
 		
 		for (int i = 0 ; i < mergeCartRequest.getLocalCart().size() ; i++) {
 			mergeCartRequest.getLocalCart().get(i).setUser(user);
-			mergeCartRequest.getLocalCart().get(i).setMovie(movieRepository.findById(mergeCartRequest.getLocalCart().get(i).getEmbeddedKeyMovieUser().getMovieId()).get());
+			Movie m = movieRepository.findById(mergeCartRequest.getLocalCart().get(i).getEmbeddedKeyMovieUser().getMovieId()).get();
+			
+			MovieUserCart mv = new MovieUserCart(new MovieUserKey(m.getMovieId(),user.getUserId()),mergeCartRequest.getLocalCart().get(i).getMovieUserCartCount());
+			mv.setMovie(m);
+			mv.setUser(user);
+			
+			cartsList.add(mv);
 		}
 		
-		movieUserCartRepository.saveAll(mergeCartRequest.getLocalCart());
+		movieUserCartRepository.saveAll(cartsList);
 		return ResponseEntity.ok(new MessageResponse("OK"));
 	}
+	
+	@PostMapping("/additemtocart")
+	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+	public ResponseEntity<?> addItemToCart(@RequestBody Map<String, Object> lookupRequestObject) {
+		long movieId = ((Number) lookupRequestObject.get("movieId")).longValue();
+		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
+		
+		Optional<Movie> mv = movieRepository.findById(movieId);
+		Optional<User> u = userRepository.findById(userId);
+		
+		Optional<MovieUserCart> userCart = movieUserCartRepository.findById(new MovieUserKey(movieId, userId));
+		
+		if (userCart.isEmpty()) {
+			MovieUserCart m = new MovieUserCart(new MovieUserKey(movieId,userId),1);
+			m.setMovie(mv.get());
+			m.setUser(u.get());
+			
+			movieUserCartRepository.save(m);
+		}
+		else {
+			userCart.get().setMovieUserCartCount(userCart.get().getMovieUserCartCount()+1);
+			movieUserCartRepository.save(userCart.get());
+		}
+		return ResponseEntity.ok(new MessageResponse("OK"));
+	}
+	
+	@PostMapping("/buycart")
+	public ResponseEntity<?> buyCart(@RequestBody Map<String, Object> lookupRequestObject) {
+		String pattern = "yyyy-MM-dd HH:mm:ss";
+		DateFormat df = new SimpleDateFormat(pattern);
+		Date today = Calendar.getInstance().getTime();        
+		String todayAsString = df.format(today);
+		System.out.println("Today is: " + todayAsString);
+		
+		String userId = String.valueOf(((Number) lookupRequestObject.get("userId")).longValue());
+		CartHistory cartHistoryMongo = cartHistoryRepository.findByuserId(userId);
+		List<MovieUserCart> userCart = movieUserCartRepository.findByEmbeddedKeyMovieUserUserId(Long.parseLong(userId));
+		
+		//Il y a un cart history il faut update ses orders
+		if (cartHistoryMongo!=null) {
+			Purchases purchase = new Purchases();
+			purchase.setPurchase_date(todayAsString);
+			for (int i = 0 ; i < userCart.size() ; i++) {
+				Items item = new Items();
+				item.setMovie_id(String.valueOf(userCart.get(i).getMovie().getMovieId()));
+				item.setCount(String.valueOf(userCart.get(i).getMovieUserCartCount()));
+				item.setMovie_price(String.valueOf(userCart.get(i).getMovie().getMoviePrice()*userCart.get(i).getMovieUserCartCount()));
+				purchase.getItems().add(item);
+			}
+			
+			cartHistoryMongo.getOrders().add(purchase);
+			cartHistoryRepository.save(cartHistoryMongo);
+		}
+		//Sinon on le créer
+		else {
+			cartHistoryMongo = new CartHistory();
+			cartHistoryMongo.setUserId(userId);
+			cartHistoryMongo.setOrders(new ArrayList<Purchases>());
+			Purchases purchase = new Purchases();
+			purchase.setPurchase_date(todayAsString);
+			purchase.setItems(new ArrayList<Items>());
+			for (int i = 0 ; i < userCart.size() ; i++) {
+				Items item = new Items();
+				item.setMovie_id(String.valueOf(userCart.get(i).getMovie().getMovieId()));
+				item.setCount(String.valueOf(userCart.get(i).getMovieUserCartCount()));
+				item.setMovie_price(String.valueOf(userCart.get(i).getMovie().getMoviePrice()*userCart.get(i).getMovieUserCartCount()));
+				purchase.getItems().add(item);
+			}
+			
+			cartHistoryMongo.getOrders().add(purchase);
+			cartHistoryRepository.save(cartHistoryMongo);
+		}
+		return ResponseEntity.ok(new MessageResponse("OK"));
+	}
+	
 }

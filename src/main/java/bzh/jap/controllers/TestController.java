@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +28,6 @@ import bzh.jap.models.*;
 import bzh.jap.payload.MergeCartRequest;
 import bzh.jap.repository.*;
 import bzh.jap.security.services.UserDetailsImpl;
-import bzh.jap.util.GeneralService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -72,6 +72,9 @@ public class TestController {
 	
 	@Autowired
 	private MovieDescriptionRepository movieDescriptionRepository;
+	
+	@Autowired
+	private CartHistoryRepository cartHistoryRepository;
 	
 	//Test par role
 	
@@ -175,15 +178,25 @@ public class TestController {
 	
 	@PostMapping("/usercart")
 	public String postUserCartTest(@RequestBody Map<String, Object> lookupRequestObject) {
-		Optional<Movie> mv = movieRepository.findById((long) lookupRequestObject.get("movieId"));
-		Optional<User> u = userRepository.findById((long) lookupRequestObject.get("userId"));
+		long movieId = ((Number) lookupRequestObject.get("movieId")).longValue();
+		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
 		
-		MovieUserCart m = new MovieUserCart(new MovieUserKey((long)lookupRequestObject.get("movieId"),(long)lookupRequestObject.get("userId")),(int)lookupRequestObject.get("quantity"));
+		Optional<Movie> mv = movieRepository.findById(movieId);
+		Optional<User> u = userRepository.findById(userId);
+		
+		MovieUserCart m = new MovieUserCart(new MovieUserKey(movieId,userId),(int)lookupRequestObject.get("quantity"));
 		m.setMovie(mv.get());
 		m.setUser(u.get());
 		
 		movieUserCartRepository.save(m);
 		return "OK";
+	}
+	
+	@DeleteMapping("/usercart/{id}")
+	@Transactional
+	public String deleteUserCartByUser(@PathVariable long id) {
+		movieUserCartRepository.deleteByEmbeddedKeyMovieUserUserId(id);
+		return "movieUserCart from user "+id+" have been deleted";
 	}
 	
 	@PostMapping("/usercartlines")
@@ -336,4 +349,33 @@ public class TestController {
 		movieDescriptionRepository.save(ms);
 		return "OK";
 	}
+	
+	@GetMapping("/allcarthistory")
+	public List<CartHistory> getAllCartHistoryTest() {
+		return cartHistoryRepository.findAll();
+	}
+	
+	@GetMapping("/carthistorybyuserid/{id}")
+	public CartHistory getCartHistoryByUserIdTest(@PathVariable String id) {
+		return cartHistoryRepository.findByuserId(id);
+	}
+	
+	@GetMapping("/carthistorybyid/{id}")
+	public CartHistory getCartHistoryById(@PathVariable String id) {
+		return cartHistoryRepository.findById(id).get();
+	}
+	
+	@PostMapping("/carthistory")
+	public String postCartHistoryTest(@Valid @RequestBody CartHistory cartHistory) {
+		CartHistory cartH = cartHistoryRepository.findByuserId(cartHistory.getUserId());
+		if (cartH!=null) {
+			cartH.getOrders().addAll(cartHistory.getOrders());
+			cartHistoryRepository.save(cartH);
+		}
+		else {
+			cartHistoryRepository.save(cartHistory);
+		}
+		return "OK";
+	}
+	
 }
