@@ -14,6 +14,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -106,6 +107,8 @@ public class UserController {
 	}
 	
 	@PostMapping("/buycart")
+	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+	@Transactional
 	public ResponseEntity<?> buyCart(@RequestBody Map<String, Object> lookupRequestObject) {
 		String pattern = "yyyy-MM-dd HH:mm:ss";
 		DateFormat df = new SimpleDateFormat(pattern);
@@ -121,6 +124,7 @@ public class UserController {
 		if (cartHistoryMongo!=null) {
 			Purchases purchase = new Purchases();
 			purchase.setPurchase_date(todayAsString);
+			purchase.setItems(new ArrayList<Items>());
 			for (int i = 0 ; i < userCart.size() ; i++) {
 				Items item = new Items();
 				item.setMovie_id(String.valueOf(userCart.get(i).getMovie().getMovieId()));
@@ -132,7 +136,7 @@ public class UserController {
 			cartHistoryMongo.getOrders().add(purchase);
 			cartHistoryRepository.save(cartHistoryMongo);
 		}
-		//Sinon on le créer
+		//Sinon on le creer
 		else {
 			cartHistoryMongo = new CartHistory();
 			cartHistoryMongo.setUserId(userId);
@@ -151,6 +155,7 @@ public class UserController {
 			cartHistoryMongo.getOrders().add(purchase);
 			cartHistoryRepository.save(cartHistoryMongo);
 		}
+		movieUserCartRepository.deleteByEmbeddedKeyMovieUserUserId(Long.parseLong(userId));
 		return ResponseEntity.ok(new MessageResponse("OK"));
 	}
 	
