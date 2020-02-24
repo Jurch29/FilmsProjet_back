@@ -185,7 +185,7 @@ public class UserController {
 		return ResponseEntity.ok(new MessageResponse("ok"));
 	}
 	
-	@PostMapping("changepassword")
+	@PostMapping("/changepassword")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	public ResponseEntity<?> changePassword(@RequestBody Map<String, Object> lookupRequestObject) {
 		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
@@ -195,7 +195,7 @@ public class UserController {
 		return ResponseEntity.ok(new MessageResponse("ok"));
 	}
 	
-	@PostMapping("changeuserdetails")
+	@PostMapping("/changeuserdetails")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	public ResponseEntity<?> changeUserDetails(@RequestBody Map<String, Object> lookupRequestObject, @RequestHeader (name="Authorization") String token) {
 		
