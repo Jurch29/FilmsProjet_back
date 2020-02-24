@@ -14,13 +14,17 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import bzh.jap.models.CartHistory;
@@ -53,6 +57,9 @@ public class UserController {
 	
 	@Autowired
 	private CartHistoryRepository cartHistoryRepository;
+	
+	@Autowired
+	private PasswordEncoder encoder;
 	
 	@GetMapping("/cart/{id}")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
@@ -157,6 +164,49 @@ public class UserController {
 		}
 		movieUserCartRepository.deleteByEmbeddedKeyMovieUserUserId(Long.parseLong(userId));
 		return ResponseEntity.ok(new MessageResponse("OK"));
+	}
+	
+	@GetMapping("/checkuserpassword")
+	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+	public ResponseEntity<?> checkPassword(@RequestParam("userId") String id, @RequestParam("password") String pswd) {
+		Optional<User> user = userRepository.findById(Long.parseLong(id));
+		
+		if (user.isEmpty()) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Utilisateur inconnu"));
+		}
+		if (!this.userPasswordCheck(pswd, user.get())) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Mauvais mot de passe"));
+		}
+		
+		return ResponseEntity.ok(new MessageResponse("ok"));
+	}
+	
+	@PostMapping("changepassword")
+	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+	public ResponseEntity<?> changePassword(@RequestBody Map<String, Object> lookupRequestObject) {
+		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
+		Optional<User> user = userRepository.findById(userId);
+		user.get().setUserPassword(encoder.encode((String) lookupRequestObject.get("password")));
+		userRepository.save(user.get());
+		return ResponseEntity.ok(new MessageResponse("ok"));
+	}
+	
+	@PostMapping("changeuserdetails")
+	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+	public ResponseEntity<?> changeUserDetails(@RequestBody Map<String, Object> lookupRequestObject, @RequestHeader (name="Authorization") String token) {
+		
+		
+		return null;
+	}
+	
+	public boolean userPasswordCheck(String password, User user) {
+	    PasswordEncoder passencoder = new BCryptPasswordEncoder();
+	    String encodedPassword = user.getUserPassword();
+	    return passencoder.matches(password, encodedPassword);
 	}
 	
 }
