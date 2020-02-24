@@ -114,7 +114,7 @@ public class AuthController {
 		return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getId(),userDetails.getUsername(),user.getUserFirstname(),user.getUserLastname(),userDetails.getEmail(),roles));
 	}
 	
-	//ObjectNode nous permet de renvoyer un objet json customis�
+	//ObjectNode nous permet de renvoyer un objet json customise
 	@GetMapping("/activation")
 	public ObjectNode activateUser(@RequestParam("user_id") String id, @RequestParam("user_activation_code") String code) {
 		
