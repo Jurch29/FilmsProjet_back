@@ -258,7 +258,7 @@ public class AuthController {
 		return ResponseEntity.ok(new MessageResponse("valid token"));
 	}
 	
-	@PostMapping("resetpassword")
+	@PostMapping("/resetpassword")
 	public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
 		
 		Optional<PasswordResetToken> pwdrtk = passwordResetTokenRepository.findByUserResetToken(resetPasswordRequest.getToken());
