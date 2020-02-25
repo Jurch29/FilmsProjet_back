@@ -196,7 +196,7 @@ public class AuthController {
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
 	
-	@PostMapping("/credentialsRecovery")
+	@PostMapping("/credentialsrecovery")
 	public ResponseEntity<?> sendCredentialsRecovery(@Valid @RequestBody Map<String, Object> payload) {
 		
 		if (payload.size() != 1 && !payload.containsKey("user_email")) {

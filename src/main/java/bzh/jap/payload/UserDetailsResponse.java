@@ -2,41 +2,28 @@ package bzh.jap.payload;
 
 import java.util.List;
 
-public class JwtResponse {
+public class UserDetailsResponse {
 	
-	private String token;
-	private String type = "Bearer";
 	private long userId;
 	private String userLogin;
 	private String userFirstname;
 	private String userLastname;
 	private String userEmail;
 	private List<String> roles;
-
-	public JwtResponse(String token, long id, String userlogin, String firstname, String lastname, String email, List<String> roles) {
-		this.token = token;
-		this.userId = id;
-		this.userLogin = userlogin;
-		this.userFirstname = firstname;
-		this.userLastname = lastname;
-		this.userEmail = email;
-		this.roles = roles;
+    private String token;
+    
+    public UserDetailsResponse() {
+		// TODO Auto-generated constructor stub
 	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
+    
+    public UserDetailsResponse(String token, long id, String userlogin, String firstname, String lastname, String email, List<String> roles) {
+		// TODO Auto-generated constructor stub
+    	this.userId = id;
+    	this.userLogin = userlogin;
+    	this.userFirstname = firstname;
+    	this.userLastname = lastname;
+    	this.userEmail = email;
+    	this.roles = roles;
 	}
 
 	public long getUserId() {
@@ -86,4 +73,13 @@ public class JwtResponse {
 	public void setRoles(List<String> roles) {
 		this.roles = roles;
 	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
 }

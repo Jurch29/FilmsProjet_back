@@ -8,12 +8,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,13 +37,17 @@ import bzh.jap.models.Movie;
 import bzh.jap.models.MovieUserCart;
 import bzh.jap.models.MovieUserKey;
 import bzh.jap.models.Purchases;
+import bzh.jap.models.Role;
 import bzh.jap.models.User;
+import bzh.jap.payload.JwtResponse;
 import bzh.jap.payload.MergeCartRequest;
 import bzh.jap.payload.MessageResponse;
+import bzh.jap.payload.UserDetailsResponse;
 import bzh.jap.repository.CartHistoryRepository;
 import bzh.jap.repository.MovieRepository;
 import bzh.jap.repository.MovieUserCartRepository;
 import bzh.jap.repository.UserRepository;
+import bzh.jap.security.services.UserDetailsImpl;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -176,6 +184,7 @@ public class UserController {
 					.badRequest()
 					.body(new MessageResponse("Utilisateur inconnu"));
 		}
+		
 		if (!this.userPasswordCheck(pswd, user.get())) {
 			return ResponseEntity
 					.badRequest()
@@ -198,9 +207,31 @@ public class UserController {
 	@PostMapping("/changeuserdetails")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	public ResponseEntity<?> changeUserDetails(@RequestBody Map<String, Object> lookupRequestObject, @RequestHeader (name="Authorization") String token) {
+		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
+		Optional<User> user = userRepository.findById(userId);
 		
+		if (user.isEmpty()) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Utilisateur inconnu"));
+		}
 		
-		return null;
+		user.get().setUserLastname((String) lookupRequestObject.get("userLastname"));
+		user.get().setUserFirstname((String) lookupRequestObject.get("userFirstname"));
+		user.get().setUserLogin((String) lookupRequestObject.get("userLogin"));
+		user.get().setUserEmail((String) lookupRequestObject.get("userEmail"));
+		
+		userRepository.save(user.get());
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();		
+		List<String> roles = userDetails.getAuthorities().stream()
+				.map(item -> item.getAuthority())
+				.collect(Collectors.toList());
+		
+		return ResponseEntity.ok(new UserDetailsResponse(token, userId, (String) lookupRequestObject.get("userLogin"),
+				(String) lookupRequestObject.get("userFirstname"), (String) lookupRequestObject.get("userLastname"),
+				(String) lookupRequestObject.get("userEmail"), roles));
 	}
 	
 	public boolean userPasswordCheck(String password, User user) {
