@@ -15,6 +15,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -44,6 +46,7 @@ import bzh.jap.repository.CartHistoryRepository;
 import bzh.jap.repository.MovieRepository;
 import bzh.jap.repository.MovieUserCartRepository;
 import bzh.jap.repository.UserRepository;
+import bzh.jap.security.jwt.JwtUtils;
 import bzh.jap.security.services.UserDetailsImpl;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -65,6 +68,12 @@ public class UserController {
 	
 	@Autowired
 	private PasswordEncoder encoder;
+	
+	@Autowired
+	private JwtUtils jwtUtils;
+	
+	@Autowired
+	private AuthenticationManager authenticationManager;
 	
 	@GetMapping("/cart/{id}")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
@@ -207,7 +216,7 @@ public class UserController {
 		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
 		Optional<User> user = userRepository.findById(userId);
 		
-		token = token.replace("Bearer ", "");
+		token = token.replace("Bearer ", ""); //**
 		
 		if (user.isEmpty()) {
 			return ResponseEntity
@@ -227,8 +236,15 @@ public class UserController {
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
+		auth.setAuthenticated(false);
 		
-		return ResponseEntity.ok(new UserDetailsResponse(token, userId, (String) lookupRequestObject.get("userLogin"),
+		Authentication newAuth = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(user.get().getUserLogin(), "rochard"));
+
+		SecurityContextHolder.getContext().setAuthentication(newAuth);
+		String jwt = jwtUtils.generateJwtToken(newAuth);
+		
+		return ResponseEntity.ok(new UserDetailsResponse(jwt, userId, (String) lookupRequestObject.get("userLogin"),
 				(String) lookupRequestObject.get("userFirstname"), (String) lookupRequestObject.get("userLastname"),
 				(String) lookupRequestObject.get("userEmail"), roles));
 	}
