@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -37,9 +36,7 @@ import bzh.jap.models.Movie;
 import bzh.jap.models.MovieUserCart;
 import bzh.jap.models.MovieUserKey;
 import bzh.jap.models.Purchases;
-import bzh.jap.models.Role;
 import bzh.jap.models.User;
-import bzh.jap.payload.JwtResponse;
 import bzh.jap.payload.MergeCartRequest;
 import bzh.jap.payload.MessageResponse;
 import bzh.jap.payload.UserDetailsResponse;
@@ -209,6 +206,8 @@ public class UserController {
 	public ResponseEntity<?> changeUserDetails(@RequestBody Map<String, Object> lookupRequestObject, @RequestHeader (name="Authorization") String token) {
 		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
 		Optional<User> user = userRepository.findById(userId);
+		
+		token = token.replace("Bearer ", "");
 		
 		if (user.isEmpty()) {
 			return ResponseEntity

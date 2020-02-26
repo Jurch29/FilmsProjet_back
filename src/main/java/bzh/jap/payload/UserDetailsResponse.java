@@ -24,6 +24,7 @@ public class UserDetailsResponse {
     	this.userLastname = lastname;
     	this.userEmail = email;
     	this.roles = roles;
+    	this.token = token;
 	}
 
 	public long getUserId() {
