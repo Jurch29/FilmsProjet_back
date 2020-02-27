@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -204,7 +204,29 @@ public class UserController {
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	public ResponseEntity<?> changePassword(@RequestBody Map<String, Object> lookupRequestObject) {
 		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		Set<String> roles = authentication.getAuthorities().stream()
+		     .map(r -> r.getAuthority()).collect(Collectors.toSet());
+		
+		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();	
+
+		//Si il n'est pas admin et qu'il tente de changer le mdp d'un autre user
+		if (!roles.contains("ROLE_ADMIN") && userId!=userDetails.getId()) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Changement de mot de passe non authorisé."));
+		}
+		
 		Optional<User> user = userRepository.findById(userId);
+		
+		if (user.isEmpty()) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Utilisateur inconnu"));
+		}
+		
 		user.get().setUserPassword(encoder.encode((String) lookupRequestObject.get("password")));
 		userRepository.save(user.get());
 		return ResponseEntity.ok(new MessageResponse("ok"));
@@ -212,16 +234,26 @@ public class UserController {
 	
 	@PostMapping("/changeuserdetails")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-	public ResponseEntity<?> changeUserDetails(@RequestBody Map<String, Object> lookupRequestObject, @RequestHeader (name="Authorization") String token) {
+	public ResponseEntity<?> changeUserDetails(@RequestBody Map<String, Object> lookupRequestObject) {
 		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
 		Optional<User> user = userRepository.findById(userId);
-		
-		token = token.replace("Bearer ", ""); //**
 		
 		if (user.isEmpty()) {
 			return ResponseEntity
 					.badRequest()
 					.body(new MessageResponse("Utilisateur inconnu"));
+		}
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+		Set<String> rolesAsSet = auth.getAuthorities().stream()
+			     .map(r -> r.getAuthority()).collect(Collectors.toSet());
+		
+		//Si il n'est pas admin et qu'il tente de changer les donnees user d'un autre user
+		if (!rolesAsSet.contains("ROLE_ADMIN") && userId!=userDetails.getId()) {
+			return ResponseEntity
+					.badRequest()
+					.body(new MessageResponse("Changement de données non authorisé."));
 		}
 		
 		user.get().setUserLastname((String) lookupRequestObject.get("userLastname"));
@@ -231,8 +263,6 @@ public class UserController {
 		
 		userRepository.save(user.get());
 		
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();		
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());

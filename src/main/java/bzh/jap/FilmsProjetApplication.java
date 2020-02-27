@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class FilmsProjetApplication {
 
 	public static void main(String[] args) {
-		System.setProperty("file.encoding", "UTF-8");
 		SpringApplication.run(FilmsProjetApplication.class, args);
 	}
 
