@@ -295,6 +295,11 @@ public class UserController {
 				(String) lookupRequestObject.get("userEmail"), roles));
 	}
 	
+	@GetMapping("/orders/{id}")
+	public CartHistory getCartHistoryByUserIdTest(@PathVariable String id) {
+		return cartHistoryRepository.findByuserId(id);
+	}
+	
 	public boolean userPasswordCheck(String password, User user) {
 	    PasswordEncoder passencoder = new BCryptPasswordEncoder();
 	    String encodedPassword = user.getUserPassword();
