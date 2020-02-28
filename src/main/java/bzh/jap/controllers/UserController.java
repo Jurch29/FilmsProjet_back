@@ -107,6 +107,7 @@ public class UserController {
 	public ResponseEntity<?> addItemToCart(@RequestBody Map<String, Object> lookupRequestObject) {
 		long movieId = ((Number) lookupRequestObject.get("movieId")).longValue();
 		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
+		int count = ((Number) lookupRequestObject.get("userId")).intValue();
 		
 		Optional<Movie> mv = movieRepository.findById(movieId);
 		Optional<User> u = userRepository.findById(userId);
@@ -114,16 +115,31 @@ public class UserController {
 		Optional<MovieUserCart> userCart = movieUserCartRepository.findById(new MovieUserKey(movieId, userId));
 		
 		if (userCart.isEmpty()) {
-			MovieUserCart m = new MovieUserCart(new MovieUserKey(movieId,userId),1);
+			MovieUserCart m = new MovieUserCart(new MovieUserKey(movieId,userId),count);
 			m.setMovie(mv.get());
 			m.setUser(u.get());
 			
 			movieUserCartRepository.save(m);
 		}
 		else {
-			userCart.get().setMovieUserCartCount(userCart.get().getMovieUserCartCount()+1);
+			userCart.get().setMovieUserCartCount(userCart.get().getMovieUserCartCount()+count);
 			movieUserCartRepository.save(userCart.get());
 		}
+		return ResponseEntity.ok(new MessageResponse("OK"));
+	}
+	
+	@PostMapping("/removeitemtocart")
+	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+	public ResponseEntity<?> removeItemToCart(@RequestBody Map<String, Object> lookupRequestObject) {
+		long movieId = ((Number) lookupRequestObject.get("movieId")).longValue();
+		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
+		int count = ((Number) lookupRequestObject.get("userId")).intValue();
+		
+		Optional<MovieUserCart> userCart = movieUserCartRepository.findById(new MovieUserKey(movieId, userId));
+		
+		userCart.get().setMovieUserCartCount(userCart.get().getMovieUserCartCount()-count);
+		movieUserCartRepository.save(userCart.get());
+		
 		return ResponseEntity.ok(new MessageResponse("OK"));
 	}
 	
