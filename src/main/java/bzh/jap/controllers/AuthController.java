@@ -108,6 +108,8 @@ public class AuthController {
 		}
 		
 		User user = userRepository.findById(userDetails.getId()).get();
+		user.setUserLastConnection(new Timestamp(System.currentTimeMillis()));
+		userRepository.save(user);
 		
 		//Pas de code d'activation : pas la premiere connexion on renvoie une r�ponse jwtresponse
 		return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getId(),userDetails.getUsername(),user.getUserFirstname(),user.getUserLastname(),userDetails.getEmail(),roles));
@@ -119,7 +121,7 @@ public class AuthController {
 		
 		Boolean result = false;
 		java.util.Optional<UserActivation> userActivation = userActivationRepository.findById(Long.parseLong(id));
-		//Le code est bon on supprime la ligne useractivation qui correspond � ce user + renvoie true
+		//Le code est bon on supprime la ligne useractivation qui correspond a ce user + renvoie true
 		if (userActivation.get().getUserActivationCode().equals(code)) {
 			userActivationRepository.delete(userActivation.get());
 			result = true;

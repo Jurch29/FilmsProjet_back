@@ -75,6 +75,12 @@ public class UserController {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 	
+	@PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
+	@GetMapping("/users")
+	public List<User> retrieveAllUsers() {
+		return userRepository.findAll();
+	}
+	
 	@GetMapping("/cart/{id}")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	public List<MovieUserCart> getUserCartByUserId(@PathVariable long id) {

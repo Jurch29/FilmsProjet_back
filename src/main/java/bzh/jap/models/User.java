@@ -72,7 +72,7 @@ public class User {
 	@JsonBackReference
     private PasswordResetToken passwordResetToken;
 	
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonBackReference
     private List<MovieUserComment> movieUserComments = new ArrayList<MovieUserComment>();
 
