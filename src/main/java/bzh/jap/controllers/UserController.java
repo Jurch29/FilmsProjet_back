@@ -110,11 +110,10 @@ public class UserController {
 	
 	@PostMapping("/clearcart")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+	@Transactional
 	public ResponseEntity<?> clearCart(@RequestBody Map<String, Object> lookupRequestObject) {
 		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
-		//TODO
-		
-		
+		movieUserCartRepository.deleteByEmbeddedKeyMovieUserUserId(userId);
 		return ResponseEntity.ok(new MessageResponse("OK"));
 	}
 	
@@ -123,7 +122,7 @@ public class UserController {
 	public ResponseEntity<?> addItemToCart(@RequestBody Map<String, Object> lookupRequestObject) {
 		long movieId = ((Number) lookupRequestObject.get("movieId")).longValue();
 		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
-		int count = ((Number) lookupRequestObject.get("userId")).intValue();
+		int count = ((Number) lookupRequestObject.get("count")).intValue();
 		
 		Optional<Movie> mv = movieRepository.findById(movieId);
 		Optional<User> u = userRepository.findById(userId);
@@ -149,7 +148,7 @@ public class UserController {
 	public ResponseEntity<?> removeItemToCart(@RequestBody Map<String, Object> lookupRequestObject) {
 		long movieId = ((Number) lookupRequestObject.get("movieId")).longValue();
 		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
-		int count = ((Number) lookupRequestObject.get("userId")).intValue();
+		int count = ((Number) lookupRequestObject.get("count")).intValue();
 		
 		Optional<MovieUserCart> userCart = movieUserCartRepository.findById(new MovieUserKey(movieId, userId));
 		
