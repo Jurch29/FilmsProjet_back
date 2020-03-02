@@ -70,7 +70,7 @@ public class Movie {
 	
 	@OneToMany
 	@JoinTable(	name = "MovieImage", 
-		joinColumns = @JoinColumn(name = "movie_id"), 
+		joinColumns = @JoinColumn(name = "movie_id"),
 		inverseJoinColumns = @JoinColumn(name = "image_id"))
 	private List<Image> images = new ArrayList<Image>();
 	

@@ -108,6 +108,16 @@ public class UserController {
 		return ResponseEntity.ok(new MessageResponse("OK"));
 	}
 	
+	@PostMapping("/clearcart")
+	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+	public ResponseEntity<?> clearCart(@RequestBody Map<String, Object> lookupRequestObject) {
+		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
+		//TODO
+		
+		
+		return ResponseEntity.ok(new MessageResponse("OK"));
+	}
+	
 	@PostMapping("/additemtocart")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	public ResponseEntity<?> addItemToCart(@RequestBody Map<String, Object> lookupRequestObject) {
