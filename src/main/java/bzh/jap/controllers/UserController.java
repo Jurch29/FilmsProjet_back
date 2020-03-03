@@ -153,7 +153,11 @@ public class UserController {
 		Optional<MovieUserCart> userCart = movieUserCartRepository.findById(new MovieUserKey(movieId, userId));
 		
 		userCart.get().setMovieUserCartCount(userCart.get().getMovieUserCartCount()-count);
-		movieUserCartRepository.save(userCart.get());
+		if (userCart.get().getMovieUserCartCount() == 0) {
+			movieUserCartRepository.delete(userCart.get());
+		} else {
+			movieUserCartRepository.save(userCart.get());
+		}
 		
 		return ResponseEntity.ok(new MessageResponse("OK"));
 	}
