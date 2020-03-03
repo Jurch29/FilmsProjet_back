@@ -75,6 +75,14 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonBackReference
     private List<MovieUserComment> movieUserComments = new ArrayList<MovieUserComment>();
+	
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@JsonBackReference
+    private List<MovieUserCart> movieUserCarts = new ArrayList<MovieUserCart>();
+	
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@JsonBackReference
+    private List<MovieUserMark> movieUserMarks = new ArrayList<MovieUserMark>();
 
 	public User() {
 	}
@@ -193,5 +201,21 @@ public class User {
 	public void removeMovieUserComment(MovieUserComment mvc) {
 		mvc.setUser(null);
 		this.movieUserComments.remove(mvc);
+	}
+
+	public List<MovieUserCart> getMovieUserCarts() {
+		return movieUserCarts;
+	}
+
+	public void setMovieUserCarts(List<MovieUserCart> movieUserCarts) {
+		this.movieUserCarts = movieUserCarts;
+	}
+
+	public List<MovieUserMark> getMovieUserMarks() {
+		return movieUserMarks;
+	}
+
+	public void setMovieUserMarks(List<MovieUserMark> movieUserMarks) {
+		this.movieUserMarks = movieUserMarks;
 	}
 }

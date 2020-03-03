@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +43,7 @@ public class AdministrationController {
 	private RoleRepository roleRepository;
 	
 	@DeleteMapping("/deleteuser/{id}")
-	@Cascade(CascadeType.DELETE)
+	@Cascade(CascadeType.REMOVE)
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<MessageResponse> deleteUser(@PathVariable long id) {
 		userRepository.deleteById(id);
