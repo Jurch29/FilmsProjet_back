@@ -288,7 +288,7 @@ public class UserController {
 		if (!rolesAsSet.contains("ROLE_ADMIN") && userId!=userDetails.getId()) {
 			return ResponseEntity
 					.badRequest()
-					.body(new MessageResponse("Changement de donn�es non authoris�."));
+					.body(new MessageResponse("Changement de donnes non authorise."));
 		}
 		
 		user.get().setUserLastname((String) lookupRequestObject.get("userLastname"));

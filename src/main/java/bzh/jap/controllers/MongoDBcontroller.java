@@ -19,7 +19,7 @@ public class MongoDBcontroller {
 	private MovieDescriptionRepository movieDescriptionRepository;
 	
 	@GetMapping("/synopsis/{id}")
-	public MovieDescription getSynopsisTest(@PathVariable String id) {
+	public MovieDescription getSynopsis(@PathVariable String id) {
 		return movieDescriptionRepository.findBymovieId(id);
 	}
 	

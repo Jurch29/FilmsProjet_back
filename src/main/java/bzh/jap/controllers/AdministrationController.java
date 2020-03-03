@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.transaction.Transactional;
-
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +41,7 @@ public class AdministrationController {
 	private RoleRepository roleRepository;
 	
 	@DeleteMapping("/deleteuser/{id}")
-	@Cascade(CascadeType.REMOVE)
+	@Cascade(CascadeType.DELETE)
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<MessageResponse> deleteUser(@PathVariable long id) {
 		userRepository.deleteById(id);
@@ -89,6 +87,20 @@ public class AdministrationController {
 		roles.add(userRole);
 		user.setRoles(roles);
 		userRepository.save(user);
+		return ResponseEntity.ok(new MessageResponse("ok"));
+	}
+	
+	@PostMapping("/addmovie")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<?> addNewMovie(@RequestBody Map<String, Object> lookupRequestObject) {
+		
+		for (Map.Entry<String, Object> entry : lookupRequestObject.entrySet()) {
+		    String key = entry.getKey();
+		    Object value = entry.getValue();
+		    System.out.println(key);
+		    System.out.println(value);
+		}
+		
 		return ResponseEntity.ok(new MessageResponse("ok"));
 	}
 	
