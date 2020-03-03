@@ -129,7 +129,7 @@ public class UserController {
 		
 		Optional<MovieUserCart> userCart = movieUserCartRepository.findById(new MovieUserKey(movieId, userId));
 		
-		if (userCart.isEmpty()) {
+		if (!userCart.isPresent()) {
 			MovieUserCart m = new MovieUserCart(new MovieUserKey(movieId,userId),count);
 			m.setMovie(mv.get());
 			m.setUser(u.get());
@@ -216,7 +216,7 @@ public class UserController {
 	public ResponseEntity<?> checkPassword(@RequestParam("userId") String id, @RequestParam("password") String pswd) {
 		Optional<User> user = userRepository.findById(Long.parseLong(id));
 		
-		if (user.isEmpty()) {
+		if (!user.isPresent()) {
 			return ResponseEntity
 					.badRequest()
 					.body(new MessageResponse("Utilisateur inconnu"));
@@ -247,12 +247,12 @@ public class UserController {
 		if (!roles.contains("ROLE_ADMIN") && userId!=userDetails.getId()) {
 			return ResponseEntity
 					.badRequest()
-					.body(new MessageResponse("Changement de mot de passe non authorisé."));
+					.body(new MessageResponse("Changement de mot de passe non authorisï¿½."));
 		}
 		
 		Optional<User> user = userRepository.findById(userId);
 		
-		if (user.isEmpty()) {
+		if (!user.isPresent()) {
 			return ResponseEntity
 					.badRequest()
 					.body(new MessageResponse("Utilisateur inconnu"));
@@ -269,7 +269,7 @@ public class UserController {
 		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
 		Optional<User> user = userRepository.findById(userId);
 		
-		if (user.isEmpty()) {
+		if (!user.isPresent()) {
 			return ResponseEntity
 					.badRequest()
 					.body(new MessageResponse("Utilisateur inconnu"));
@@ -284,7 +284,7 @@ public class UserController {
 		if (!rolesAsSet.contains("ROLE_ADMIN") && userId!=userDetails.getId()) {
 			return ResponseEntity
 					.badRequest()
-					.body(new MessageResponse("Changement de données non authorisé."));
+					.body(new MessageResponse("Changement de donnï¿½es non authorisï¿½."));
 		}
 		
 		user.get().setUserLastname((String) lookupRequestObject.get("userLastname"));

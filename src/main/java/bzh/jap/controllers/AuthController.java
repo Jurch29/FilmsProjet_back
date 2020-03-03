@@ -239,11 +239,11 @@ public class AuthController {
 
 		//Envoie mail
 		Email mail = new Email();
-		mail.sendEmail(javaMailSender, "Bonjour "+user.getUserFirstname()+", \nsuite à votre demande veuillez retrouver ci-dessous un lien vous permettant"
-				+ " de réinitialiser votre mot de passe.\n\n"
-				+ "http://"+this.execenv+"/passwordreset?token="+pwdrtk.getUserResetToken()+"&user_email="+(String) payload.get("user_email"), "Récupération des identifiants de connexion", (String) payload.get("user_email"));
+		mail.sendEmail(javaMailSender, "Bonjour "+user.getUserFirstname()+", \nsuite ï¿½ votre demande veuillez retrouver ci-dessous un lien vous permettant"
+				+ " de rï¿½initialiser votre mot de passe.\n\n"
+				+ "http://"+this.execenv+"/passwordreset?token="+pwdrtk.getUserResetToken()+"&user_email="+(String) payload.get("user_email"), "Rï¿½cupï¿½ration des identifiants de connexion", (String) payload.get("user_email"));
 		
-		return ResponseEntity.ok(new MessageResponse("Un mail de récupération à été envoyé."));
+		return ResponseEntity.ok(new MessageResponse("Un mail de rï¿½cupï¿½ration ï¿½ ï¿½tï¿½ envoyï¿½."));
 	}
 	
 	@GetMapping("/ispasswordresettokenvalid")
@@ -251,7 +251,7 @@ public class AuthController {
 		
 		Optional<PasswordResetToken> pwdrtk = passwordResetTokenRepository.findByUserResetToken(token);
 		
-		if (pwdrtk.isEmpty()) {
+		if (!pwdrtk.isPresent()) {
 			return ResponseEntity.ok(new MessageResponse("invalid token"));
 		}
 		if (pwdrtk.get().getTokenExpiration().before(new Timestamp(System.currentTimeMillis()))) {
@@ -265,7 +265,7 @@ public class AuthController {
 		
 		Optional<PasswordResetToken> pwdrtk = passwordResetTokenRepository.findByUserResetToken(resetPasswordRequest.getToken());
 		
-		if (pwdrtk.isEmpty()) {
+		if (!pwdrtk.isPresent()) {
 			return ResponseEntity.ok(new MessageResponse("invalid token"));
 		}
 		if (pwdrtk.get().getTokenExpiration().before(new Timestamp(System.currentTimeMillis()))) {
