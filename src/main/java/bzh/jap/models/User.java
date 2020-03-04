@@ -78,11 +78,11 @@ public class User {
     private List<MovieUserComment> movieUserComments = new ArrayList<MovieUserComment>();
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	@JsonBackReference(value="movie-user-carts")
+	@JsonBackReference(value="user-carts")
     private List<MovieUserCart> movieUserCarts = new ArrayList<MovieUserCart>();
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	@JsonBackReference(value="movie-user-marks")
+	@JsonBackReference(value="user-marks")
     private List<MovieUserMark> movieUserMarks = new ArrayList<MovieUserMark>();
 
 	public User() {

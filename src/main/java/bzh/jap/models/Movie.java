@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -93,9 +95,17 @@ public class Movie {
 		inverseJoinColumns = @JoinColumn(name = "category_id"))
 	private List<Category> categories = new ArrayList<Category>();
 	
-	@OneToMany(mappedBy = "movie")
+	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonManagedReference(value="movie-comments")
     private List<MovieUserComment> movieUserComments = new ArrayList<MovieUserComment>();
+	
+	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@JsonBackReference(value="movie-carts")
+    private List<MovieUserCart> movieUserCarts = new ArrayList<MovieUserCart>();
+	
+	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@JsonBackReference(value="movie-marks")
+    private List<MovieUserMark> movieUserMarks = new ArrayList<MovieUserMark>();
 	
 	public Movie() {
 		// TODO Auto-generated constructor stub
@@ -250,4 +260,21 @@ public class Movie {
 		mvc.setMovie(null);
 		this.movieUserComments.remove(mvc);
 	}
+
+	public List<MovieUserCart> getMovieUserCarts() {
+		return movieUserCarts;
+	}
+
+	public void setMovieUserCarts(List<MovieUserCart> movieUserCarts) {
+		this.movieUserCarts = movieUserCarts;
+	}
+
+	public List<MovieUserMark> getMovieUserMarks() {
+		return movieUserMarks;
+	}
+
+	public void setMovieUserMarks(List<MovieUserMark> movieUserMarks) {
+		this.movieUserMarks = movieUserMarks;
+	}
+	
 }
