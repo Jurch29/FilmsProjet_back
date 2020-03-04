@@ -138,13 +138,13 @@ public class AuthController {
 		if (userRepository.existsByUserLogin(signUpRequest.getUserLogin())) {
 			return ResponseEntity
 					.badRequest()
-					.body(new MessageResponse("Error: Userlogin is already taken!"));
+					.body(new MessageResponse("Erreur: Pseudo déjà utilisé!"));
 		}
 
 		if (userRepository.existsByUserEmail(signUpRequest.getUserEmail())) {
 			return ResponseEntity
 					.badRequest()
-					.body(new MessageResponse("Error: Email is already in use!"));
+					.body(new MessageResponse("Erreur: E-mail déjà utilisée!"));
 		}
 
 		//Creer un nouvel utilisateur
