@@ -29,7 +29,7 @@ public class UserActivation {
 	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     @MapsId
-    @JsonManagedReference
+    @JsonManagedReference(value="user-activation")
     private User user;
 	
 	public UserActivation() {

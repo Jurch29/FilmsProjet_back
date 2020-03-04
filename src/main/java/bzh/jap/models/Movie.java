@@ -19,6 +19,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(	name = "Movie" )
@@ -93,7 +94,7 @@ public class Movie {
 	private List<Category> categories = new ArrayList<Category>();
 	
 	@OneToMany(mappedBy = "movie")
-	@JsonBackReference
+	@JsonManagedReference(value="movie-comments")
     private List<MovieUserComment> movieUserComments = new ArrayList<MovieUserComment>();
 	
 	public Movie() {

@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -29,12 +30,12 @@ public class MovieUserComment {
 	
 	@ManyToOne()
     @JoinColumn(name="user_id", nullable = false)
-    @JsonManagedReference
+	@JsonBackReference(value="user-comments")
     private User user;
 	
 	@ManyToOne()
     @JoinColumn(name="movie_id", nullable = false)
-    @JsonManagedReference
+	@JsonBackReference(value="movie-comments")
     private Movie movie;
 	
 	@Basic

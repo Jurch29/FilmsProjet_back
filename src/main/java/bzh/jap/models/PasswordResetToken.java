@@ -36,7 +36,7 @@ public class PasswordResetToken {
 	@OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user_id")
     @MapsId
-    @JsonManagedReference
+    @JsonManagedReference(value="password-reset-token")
     private User user;
 	
 	public PasswordResetToken() {

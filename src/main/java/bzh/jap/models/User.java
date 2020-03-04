@@ -12,6 +12,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(	name = "User", 
@@ -65,23 +66,23 @@ public class User {
 	private Set<Role> roles = new HashSet<>();
 	
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	@JsonBackReference
+	@JsonBackReference(value="user-activation")
     private UserActivation userActivation;
 	
 	@OneToOne(mappedBy = "user", cascade = CascadeType.MERGE, orphanRemoval = true, fetch = FetchType.LAZY)
-	@JsonBackReference
+	@JsonBackReference(value="password-reset-token")
     private PasswordResetToken passwordResetToken;
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	@JsonBackReference
+	@JsonManagedReference(value="user-comments")
     private List<MovieUserComment> movieUserComments = new ArrayList<MovieUserComment>();
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	@JsonBackReference
+	@JsonBackReference(value="movie-user-carts")
     private List<MovieUserCart> movieUserCarts = new ArrayList<MovieUserCart>();
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	@JsonBackReference
+	@JsonBackReference(value="movie-user-marks")
     private List<MovieUserMark> movieUserMarks = new ArrayList<MovieUserMark>();
 
 	public User() {

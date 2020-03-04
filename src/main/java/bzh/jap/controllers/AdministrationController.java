@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.validation.Valid;
+
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import bzh.jap.models.ERole;
+import bzh.jap.models.Movie;
 import bzh.jap.models.Role;
 import bzh.jap.models.User;
+import bzh.jap.payload.AddMovieRequest;
+import bzh.jap.payload.LoginRequest;
 import bzh.jap.payload.MessageResponse;
 import bzh.jap.repository.MovieRepository;
 import bzh.jap.repository.RoleRepository;
@@ -104,15 +109,11 @@ public class AdministrationController {
 	
 	@PostMapping("/addmovie")
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<?> addNewMovie(@RequestBody Map<String, Object> lookupRequestObject) {
-		
-		for (Map.Entry<String, Object> entry : lookupRequestObject.entrySet()) {
-		    String key = entry.getKey();
-		    Object value = entry.getValue();
-		    System.out.println(key);
-		    System.out.println(value);
-		}
-		
+	public ResponseEntity<?> addNewMovie(@Valid @RequestBody AddMovieRequest addMovieRequest) {
+		Movie movie = addMovieRequest.getMovie();
+		movie.setMovieFilePath("/localFile");
+		movie.setMovieIsDeleted(false);
+		movieRepository.save(movie);
 		return ResponseEntity.ok(new MessageResponse("ok"));
 	}
 	
