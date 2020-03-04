@@ -23,6 +23,7 @@ import bzh.jap.models.ERole;
 import bzh.jap.models.Role;
 import bzh.jap.models.User;
 import bzh.jap.payload.MessageResponse;
+import bzh.jap.repository.MovieRepository;
 import bzh.jap.repository.RoleRepository;
 import bzh.jap.repository.UserRepository;
 
@@ -33,6 +34,9 @@ public class AdministrationController {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private MovieRepository movieRepository;
 	
 	@Autowired
 	private PasswordEncoder encoder;
@@ -88,6 +92,14 @@ public class AdministrationController {
 		user.setRoles(roles);
 		userRepository.save(user);
 		return ResponseEntity.ok(new MessageResponse("ok"));
+	}
+	
+	@DeleteMapping("/deletemovie/{id}")
+	@Cascade(CascadeType.DELETE)
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<MessageResponse> deleteMovie(@PathVariable long id) {
+		movieRepository.deleteById(id);
+		return ResponseEntity.ok(new MessageResponse("Movie deleted"));
 	}
 	
 	@PostMapping("/addmovie")
