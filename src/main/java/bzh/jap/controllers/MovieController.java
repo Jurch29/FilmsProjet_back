@@ -16,12 +16,14 @@ import bzh.jap.models.Category;
 import bzh.jap.models.Movie;
 import bzh.jap.models.MovieComments;
 import bzh.jap.models.MovieUserComment;
+import bzh.jap.models.User;
 import bzh.jap.repository.ActorRepository;
 import bzh.jap.repository.AuthorRepository;
 import bzh.jap.repository.CategoryRepository;
 import bzh.jap.repository.MovieCommentsRepository;
 import bzh.jap.repository.MovieRepository;
 import bzh.jap.repository.MovieUserCommentRepository;
+import bzh.jap.repository.UserRepository;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -45,6 +47,9 @@ public class MovieController {
 	
 	@Autowired
 	private MovieCommentsRepository movieCommentRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	@GetMapping("/movies")
 	public List<Movie> retrieveAllMovies() {
@@ -79,5 +84,10 @@ public class MovieController {
 	@GetMapping("/commentcontent/{id}")
 	public MovieComments getCommentContentByCommentId(@PathVariable String id) {
 		return movieCommentRepository.findBycommentId(id);
+	}
+	
+	@GetMapping("/commentuser/{id}")
+	public User getMovieByCommentId(@PathVariable long id) {
+		return userRepository.findBymovieUserCommentsMovieUserCommentId(id);
 	}
 }

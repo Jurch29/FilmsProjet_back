@@ -339,6 +339,11 @@ public class UserController {
 		return movieCommentRepository.findBycommentId(id);
 	}
 	
+	@GetMapping("/commentmovie/{id}")
+	public Movie getMovieByCommentId(@PathVariable long id) {
+		return movieRepository.findBymovieUserCommentsMovieUserCommentId(id);
+	}
+	
 	public boolean userPasswordCheck(String password, User user) {
 	    PasswordEncoder passencoder = new BCryptPasswordEncoder();
 	    String encodedPassword = user.getUserPassword();

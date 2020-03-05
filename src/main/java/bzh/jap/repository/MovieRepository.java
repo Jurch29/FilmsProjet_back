@@ -7,5 +7,5 @@ import bzh.jap.models.Movie;
 
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Long> {
-
+	public Movie findBymovieUserCommentsMovieUserCommentId(long id);
 }
