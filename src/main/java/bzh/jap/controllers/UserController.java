@@ -35,7 +35,9 @@ import org.springframework.web.bind.annotation.RestController;
 import bzh.jap.models.CartHistory;
 import bzh.jap.models.Items;
 import bzh.jap.models.Movie;
+import bzh.jap.models.MovieComments;
 import bzh.jap.models.MovieUserCart;
+import bzh.jap.models.MovieUserComment;
 import bzh.jap.models.MovieUserKey;
 import bzh.jap.models.Purchases;
 import bzh.jap.models.User;
@@ -43,8 +45,10 @@ import bzh.jap.payload.MergeCartRequest;
 import bzh.jap.payload.MessageResponse;
 import bzh.jap.payload.UserDetailsResponse;
 import bzh.jap.repository.CartHistoryRepository;
+import bzh.jap.repository.MovieCommentsRepository;
 import bzh.jap.repository.MovieRepository;
 import bzh.jap.repository.MovieUserCartRepository;
+import bzh.jap.repository.MovieUserCommentRepository;
 import bzh.jap.repository.UserRepository;
 import bzh.jap.security.jwt.JwtUtils;
 import bzh.jap.security.services.UserDetailsImpl;
@@ -65,6 +69,12 @@ public class UserController {
 	
 	@Autowired
 	private CartHistoryRepository cartHistoryRepository;
+	
+	@Autowired
+	private MovieUserCommentRepository movieUserCommentRepository;
+	
+	@Autowired
+	private MovieCommentsRepository movieCommentRepository;
 	
 	@Autowired
 	private PasswordEncoder encoder;
@@ -315,8 +325,18 @@ public class UserController {
 	}
 	
 	@GetMapping("/orders/{id}")
-	public CartHistory getCartHistoryByUserIdTest(@PathVariable String id) {
+	public CartHistory getCartHistoryByUserId(@PathVariable String id) {
 		return cartHistoryRepository.findByuserId(id);
+	}
+	
+	@GetMapping("/comments/{id}")
+	public List<MovieUserComment> getAllCommentsByUserId(@PathVariable long id) {
+		return movieUserCommentRepository.findByuserUserId(id);
+	}
+	
+	@GetMapping("/commentcontent/{id}")
+	public MovieComments getCommentContentByCommentId(@PathVariable String id) {
+		return movieCommentRepository.findBycommentId(id);
 	}
 	
 	public boolean userPasswordCheck(String password, User user) {

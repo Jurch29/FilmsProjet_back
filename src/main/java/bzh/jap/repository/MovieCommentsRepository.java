@@ -6,6 +6,6 @@ import bzh.jap.models.MovieComments;
 
 public interface MovieCommentsRepository extends MongoRepository<MovieComments, String> {
 
-	public MovieComments findByCommentId(String commentId);
+	public MovieComments findBycommentId(String commentId);
 	
 }

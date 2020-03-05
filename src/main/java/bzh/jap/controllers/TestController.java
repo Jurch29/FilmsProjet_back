@@ -324,7 +324,7 @@ public class TestController {
 	
 	@GetMapping("/comments/{id}")
 	public MovieComments getCommentsTest(@PathVariable String id) {
-		return movieCommentsRepository.findByCommentId(id);
+		return movieCommentsRepository.findBycommentId(id);
 	}
 	
 	@PostMapping("/comments")
