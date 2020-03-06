@@ -315,7 +315,7 @@ public class UserController {
 		
 		Authentication newAuth = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(user.get().getUserLogin(), (String) lookupRequestObject.get("password")));
-
+		
 		SecurityContextHolder.getContext().setAuthentication(newAuth);
 		String jwt = jwtUtils.generateJwtToken(newAuth);
 		

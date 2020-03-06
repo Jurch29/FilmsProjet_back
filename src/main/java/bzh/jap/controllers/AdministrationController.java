@@ -25,6 +25,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import bzh.jap.models.Actor;
+import bzh.jap.models.Author;
+import bzh.jap.models.Category;
 import bzh.jap.models.ERole;
 import bzh.jap.models.Movie;
 import bzh.jap.models.MovieDescription;
@@ -32,6 +35,10 @@ import bzh.jap.models.Role;
 import bzh.jap.models.User;
 import bzh.jap.payload.AddMovieRequest;
 import bzh.jap.payload.MessageResponse;
+import bzh.jap.repository.ActorRepository;
+import bzh.jap.repository.AuthorRepository;
+import bzh.jap.repository.CategoryRepository;
+import bzh.jap.repository.ImageRepository;
 import bzh.jap.repository.MovieDescriptionRepository;
 import bzh.jap.repository.MovieRepository;
 import bzh.jap.repository.RoleRepository;
@@ -56,6 +63,15 @@ public class AdministrationController {
 	
 	@Autowired
 	private MovieDescriptionRepository movieDescriptionRepository;
+	
+	@Autowired
+	private ActorRepository actorRepository;
+	
+	@Autowired
+	private AuthorRepository authorRepository;
+	
+	@Autowired
+	private CategoryRepository categoryRepository;
 	
 	@DeleteMapping("/deleteuser/{id}")
 	@Cascade(CascadeType.DELETE)
@@ -154,6 +170,59 @@ public class AdministrationController {
 		movieDescription.setMovieDescription(addMovieRequest.getSynopsis());
 		movieDescriptionRepository.save(movieDescription);
 		return ResponseEntity.ok(new MessageResponse("ok"));
+	}
+	
+	@PostMapping("/addactor")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<?> addNewActor(@RequestBody Map<String, Object> lookupRequestObject) {
+		Actor actor = new Actor();
+		actor.setActorFirstName((String)lookupRequestObject.get("firstname"));
+		actor.setActorLastName((String)lookupRequestObject.get("lastname"));
+		actorRepository.save(actor);
+		return ResponseEntity.ok(new MessageResponse("ok"));
+	}
+	
+	@PostMapping("/addauthor")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<?> addNewAuthor(@RequestBody Map<String, Object> lookupRequestObject) {
+		Author author = new Author();
+		author.setAuthorFirstName((String)lookupRequestObject.get("firstname"));
+		author.setAuthorLastName((String)lookupRequestObject.get("lastname"));
+		authorRepository.save(author);
+		return ResponseEntity.ok(new MessageResponse("ok"));
+	}
+	
+	@PostMapping("/addcategory")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<?> addNewCategory(@RequestBody Map<String, Object> lookupRequestObject) {
+		Category category = new Category();
+		category.setCategoryTitle((String)lookupRequestObject.get("category"));
+		categoryRepository.save(category);
+		return ResponseEntity.ok(new MessageResponse("ok"));
+	}
+	
+	@DeleteMapping("/deleteactor/{id}")
+	@Cascade(CascadeType.DELETE)
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<MessageResponse> deleteActor(@PathVariable long id) {
+		actorRepository.deleteById(id);
+		return ResponseEntity.ok(new MessageResponse("Actor deleted"));
+	}
+	
+	@DeleteMapping("/deleteauthor/{id}")
+	@Cascade(CascadeType.DELETE)
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<MessageResponse> deleteAuthor(@PathVariable long id) {
+		authorRepository.deleteById(id);
+		return ResponseEntity.ok(new MessageResponse("Author deleted"));
+	}
+	
+	@DeleteMapping("/deletecategory/{id}")
+	@Cascade(CascadeType.DELETE)
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<MessageResponse> deleteCategory(@PathVariable long id) {
+		categoryRepository.deleteById(id);
+		return ResponseEntity.ok(new MessageResponse("Category deleted"));
 	}
 	
 }

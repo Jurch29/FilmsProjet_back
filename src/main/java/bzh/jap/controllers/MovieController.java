@@ -90,4 +90,10 @@ public class MovieController {
 	public User getMovieByCommentId(@PathVariable long id) {
 		return userRepository.findBymovieUserCommentsMovieUserCommentId(id);
 	}
+	
+	@GetMapping("/gettopfive")
+	public List<Movie> gettop(){
+		return movieRepository.findTopFiveMovies();
+	}
+	
 }
