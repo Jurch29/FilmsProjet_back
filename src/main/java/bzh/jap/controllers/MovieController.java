@@ -123,4 +123,10 @@ public class MovieController {
 
 		return ResponseEntity.ok(new MessageResponse("OK"));
 	}
+	
+	@GetMapping("/getmovieusermark")
+	public int getMovieUserMark(@RequestBody Map<String, Object> lookupRequestObject) {
+		long movieId = ((Number) lookupRequestObject.get("movieId")).longValue();
+		return movieRepository.getAverageMark(movieId);
+	}
 }

@@ -16,5 +16,5 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 	List<Movie> findTopFiveMovies();
 	
 	@Query("SELECT ROUND(AVG(MovieUserMark.movie_user_mark_mark), 1) AS mark FROM MovieUserMark WHERE MovieUserMark.movie_id =?1")
-	int getAverageMark(Integer movieId);
+	int getAverageMark(long movieId);
 }
