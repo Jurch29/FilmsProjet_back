@@ -108,7 +108,7 @@ public class MovieController {
 	public ResponseEntity<?> addCommentToMovie(@RequestBody Map<String, Object> lookupRequestObject) {
 		long movieId = ((Number) lookupRequestObject.get("movieId")).longValue();
 		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
-		String commentContent = ((String) lookupRequestObject.get("commentContent")).toString();
+		String commentContent = ((String) lookupRequestObject.get("content")).toString();
 		
 		Optional<Movie> mv = movieRepository.findById(movieId);
 		Optional<User> u = userRepository.findById(userId);
