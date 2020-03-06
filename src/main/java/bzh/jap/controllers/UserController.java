@@ -349,7 +349,7 @@ public class UserController {
 		return movieRepository.findBymovieUserCommentsMovieUserCommentId(id);
 	}
 	
-	@PostMapping("/changeuserdetails")
+	@PostMapping("/sendnewmark")
 	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	public ResponseEntity<?> postMark(@RequestBody Map<String, Object> lookupRequestObject) {
 		long movieId = ((Number) lookupRequestObject.get("movieId")).longValue();
