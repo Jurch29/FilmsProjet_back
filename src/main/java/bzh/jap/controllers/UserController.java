@@ -354,7 +354,7 @@ public class UserController {
 	public ResponseEntity<?> postMark(@RequestBody Map<String, Object> lookupRequestObject) {
 		long movieId = ((Number) lookupRequestObject.get("movieId")).longValue();
 		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
-		int count = ((Number) lookupRequestObject.get("count")).intValue();
+		int count = ((Number) lookupRequestObject.get("mark")).intValue();
 		
 		Optional<MovieUserMark> mv = movieUserMarkRepository.findById(new MovieUserKey(movieId, userId));
 		
