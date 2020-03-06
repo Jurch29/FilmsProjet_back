@@ -17,7 +17,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "MovieUserComment")
@@ -53,6 +52,13 @@ public class MovieUserComment {
 	
 	public MovieUserComment() {
 		// TODO Auto-generated constructor stub
+	}
+	
+	public MovieUserComment(User user, Movie movie, Timestamp time, boolean isDeleted) {
+		this.user = user;
+		this.movie = movie;
+		this.movieUserCommentDate = time;
+		this.movieUserCommentIsDeleted = isDeleted;
 	}
 	
 	public MovieUserComment(Timestamp movieUserCommentDate) {
