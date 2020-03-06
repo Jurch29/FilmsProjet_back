@@ -39,6 +39,7 @@ import bzh.jap.models.MovieComments;
 import bzh.jap.models.MovieUserCart;
 import bzh.jap.models.MovieUserComment;
 import bzh.jap.models.MovieUserKey;
+import bzh.jap.models.MovieUserMark;
 import bzh.jap.models.Purchases;
 import bzh.jap.models.User;
 import bzh.jap.payload.MergeCartRequest;
@@ -49,6 +50,7 @@ import bzh.jap.repository.MovieCommentsRepository;
 import bzh.jap.repository.MovieRepository;
 import bzh.jap.repository.MovieUserCartRepository;
 import bzh.jap.repository.MovieUserCommentRepository;
+import bzh.jap.repository.MovieUserMarkRepository;
 import bzh.jap.repository.UserRepository;
 import bzh.jap.security.jwt.JwtUtils;
 import bzh.jap.security.services.UserDetailsImpl;
@@ -84,6 +86,9 @@ public class UserController {
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private MovieUserMarkRepository movieUserMarkRepository;
 	
 	@PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
 	@GetMapping("/users")
@@ -342,6 +347,29 @@ public class UserController {
 	@GetMapping("/commentmovie/{id}")
 	public Movie getMovieByCommentId(@PathVariable long id) {
 		return movieRepository.findBymovieUserCommentsMovieUserCommentId(id);
+	}
+	
+	@PostMapping("/changeuserdetails")
+	@PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+	public ResponseEntity<?> postMark(@RequestBody Map<String, Object> lookupRequestObject) {
+		long movieId = ((Number) lookupRequestObject.get("movieId")).longValue();
+		long userId = ((Number) lookupRequestObject.get("userId")).longValue();
+		int count = ((Number) lookupRequestObject.get("count")).intValue();
+		
+		Optional<MovieUserMark> mv = movieUserMarkRepository.findById(new MovieUserKey(movieId, userId));
+		
+		if (!mv.isPresent()) {
+			MovieUserMark mark = new MovieUserMark();
+			mark.setEmbeddedKey(new MovieUserKey(movieId, userId));
+			mark.setMovieUserMarkMark(count);
+			movieUserMarkRepository.save(mark);
+		}
+		else {
+			mv.get().setMovieUserMarkMark(count);
+			movieUserMarkRepository.save(mv.get());
+		}
+		
+		return ResponseEntity.ok(new MessageResponse("ok"));
 	}
 	
 	public boolean userPasswordCheck(String password, User user) {
