@@ -22,7 +22,7 @@ public class SignupRequest {
     @Email
     private String userEmail;
     
-    private Set<String> role;
+    private Set<String> roles;
     
     @NotBlank
     @Size(min = 6, max = 40)
@@ -68,17 +68,17 @@ public class SignupRequest {
 		this.userPassword = userPassword;
 	}
 
-	public Set<String> getRole() {
-      return this.role;
+	public Set<String> getRoles() {
+      return this.roles;
     }
     
-    public void setRole(Set<String> role) {
-      this.role = role;
+    public void setRoles(Set<String> role) {
+      this.roles = role;
     }
     
     @Override
     public String toString() {
     	// TODO Auto-generated method stub
-    	return "lastname : "+this.userLastname+" firstname: "+this.userFirstname+" username: "+this.userLogin+" email: "+this.userEmail+" role: "+this.role;
+    	return "lastname : "+this.userLastname+" firstname: "+this.userFirstname+" username: "+this.userLogin+" email: "+this.userEmail+" role: "+this.roles;
     }
 }

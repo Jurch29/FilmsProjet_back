@@ -153,7 +153,7 @@ public class AuthController {
 		
 		user.setUserIsDeleted(false);
 
-		Set<String> strRoles = signUpRequest.getRole();
+		Set<String> strRoles = signUpRequest.getRoles();
 		Set<Role> roles = new HashSet<>();
 
 		if (strRoles == null) {
@@ -163,18 +163,18 @@ public class AuthController {
 		} else {
 			strRoles.forEach(role -> {
 				switch (role) {
-				case "admin":
+				case "ROLE_ADMIN":
 					Role adminRole = roleRepository.findByRoleTitle(ERole.ROLE_ADMIN)
 							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 					roles.add(adminRole);
-
 					break;
-				case "mod":
+					
+				case "ROLE_MODERATOR":
 					Role modRole = roleRepository.findByRoleTitle(ERole.ROLE_MODERATOR)
 							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 					roles.add(modRole);
-
 					break;
+					
 				default:
 					Role userRole = roleRepository.findByRoleTitle(ERole.ROLE_USER)
 							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));

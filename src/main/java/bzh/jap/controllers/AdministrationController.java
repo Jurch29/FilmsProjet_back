@@ -38,7 +38,6 @@ import bzh.jap.payload.MessageResponse;
 import bzh.jap.repository.ActorRepository;
 import bzh.jap.repository.AuthorRepository;
 import bzh.jap.repository.CategoryRepository;
-import bzh.jap.repository.ImageRepository;
 import bzh.jap.repository.MovieDescriptionRepository;
 import bzh.jap.repository.MovieRepository;
 import bzh.jap.repository.RoleRepository;
