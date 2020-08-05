@@ -185,7 +185,6 @@ public class UserController {
 		DateFormat df = new SimpleDateFormat(pattern);
 		Date today = Calendar.getInstance().getTime();        
 		String todayAsString = df.format(today);
-		System.out.println("Today is: " + todayAsString);
 		
 		String userId = String.valueOf(((Number) lookupRequestObject.get("userId")).longValue());
 		CartHistory cartHistoryMongo = cartHistoryRepository.findByuserId(userId);
