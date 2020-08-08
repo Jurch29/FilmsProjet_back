@@ -1,0 +1,4 @@
+Docker :
+
+Build image : (racine projet) docker build -t backend_filmsprojet .
+Run image : docker run --name backendfilmsprojet_container -d -p 8081:8081 backend_filmsprojet
